@@ -7,6 +7,7 @@
 import sys
 import threading
 from Adafruit_PWM_Servo_Driver import PWM
+from sonic_striker_steppers import Motor
 import time
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -20,7 +21,8 @@ gpio.cleanup()
 # ===========================================================================
 
 # Initialise the PWM device using the default address
-pwm = PWM(0x40)
+#pwm = PWM(0x40)
+pwm = PWM(0x41)
 # Note if you'd like more debug output you can instead run:
 #pwm = PWM(0x40, debug=True)
 
@@ -28,33 +30,25 @@ servoMin = 150  # Min pulse length out of 4096
 servoMax = 600  # Max pulse length out of 4096
 servoZero = (servoMax-servoMin)/2 + servoMin
 
+#these are pwm ports not gpio
 servoLeft = 0
 servoRight = 1
 servoLift = 2
 #servoGrip = 3
 servo_echo = 4
 
-# four pwm or hat pins are needed for the stepper striker
-#striker_stepper_IN1 = 12
-#striker_stepper_IN2 = 13
-#striker_stepper_IN3 = 14
-#striker_stepper_IN4 = 14
+#Striker actuator
+striker_gpio1 = 13
+striker_gpio2 = 15
 
-#gpio setup here
-#outPin = 38
-# this is for the auto bumbers, which we are not using
-#inPin = 40 #assign the gpio pins to variables
-#inPin2 = 38
-#define inPin3 here below
-""" inPin3 = """
+# four gpio pins are needed for the striker steper
+striker_stepper_IN1 = 31
+striker_stepper_IN2 = 32
+striker_stepper_IN3 = 33
+striker_stepper_IN4 = 36
 
 gpio.setmode(gpio.BOARD)
 
-#gpio.setup(outPin, gpio.OUT, initial=gpio.HIGH) #set the output pin to a permanent high, this will go directly into the input pin once the button is pressed
-#gpio.setup(inPin, gpio.IN) #setup pin 21 as input
-#gpio.setup(inPin2, gpio.IN)
-#uncomment below to set the inPin3 to GPIO input
-""" gpio.setup(inPin3, gpio.IN) """
 
 #.5ms 1.5ms 2.5ms
 
@@ -163,22 +157,39 @@ def sonic_get_distance():
 Using an universal power door actuator and an L298N H-Bridge
 the code will move the actuator forward, wait, then retract
 """
-gpio.setup(13, gpio.OUT) #gpio27
-gpio.setup(15, gpio.OUT) #gpio22
+gpio.setup(striker_gpio1, gpio.OUT) #gpio27
+gpio.setup(striker_gpio2, gpio.OUT) #gpio22
 
 def strike():
        #forward
        print("strike")
-       gpio.output(13, gpio.HIGH)
+       gpio.output(striker_gpio1, gpio.HIGH)
        time.sleep(.04)
-       gpio.output(13, gpio.LOW)
+       gpio.output(striker_gpio1, gpio.LOW)
        #pause
        #time.sleep(1)
        #backward
-       #gpio.output(15, gpio.HIGH)
+       #gpio.output(striker_gpio2, gpio.HIGH)
        #time.sleep(.03)
-       #gpio.output(15, gpio.LOW)
+       #gpio.output(striker_gpio2, gpio.LOW)
 
+
+# STRIKER SERVO
+striker_direction = Motor([striker_stepper_IN1,striker_stepper_IN2,striker_stepper_IN3,striker_stepper_IN4])
+
+def turn_striker(direction):
+        m = striker_direction
+        m.rpm = 5
+        print "Pause in seconds: " + `m._T`
+        m.move_to(90)
+        time.sleep(1)
+        m.move_to(0)
+        time.sleep(1)
+        m.mode = 2
+        m.move_to(90)
+        time.sleep(1)
+        m.move_to(0)
+       #GPIO.cleanup()
 
 # Keyboard stuff
 
@@ -193,7 +204,7 @@ class MyFrame(tk.Frame):
         root.bind('<KeyPress>', self.key_press)
         root.bind('<KeyRelease>', self.key_release)
 
-    #keys in use w,s,k,z,a,u,d,c,o,t,g,n
+    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,l
     def key_press(self, event):
         if self.afterId != None:
             self.after_cancel( self.afterId )
@@ -252,6 +263,9 @@ class MyFrame(tk.Frame):
               pwm.setPWMFreq(50)
               #pwm.setPWM(4, 0, servomax)
               text.insert("end", "ultrasonic servo")
+            elif event.char == "l":
+              turn_striker(0)
+              text.insert('end',"turning striker")
              
 
     def key_release(self, event):

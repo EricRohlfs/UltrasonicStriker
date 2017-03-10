@@ -6,6 +6,7 @@
 import sys
 import threading
 from Adafruit_PWM_Servo_Driver import PWM
+from sonic_striker_steppers import Motor
 import time
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -17,7 +18,8 @@ except RuntimeError:
 # ===========================================================================
 
 # Initialise the PWM device using the default address
-pwm = PWM(0x40)
+#pwm = PWM(0x40)
+pwm = PWM(0x41)
 # Note if you'd like more debug output you can instead run:
 #pwm = PWM(0x40, debug=True)
 
