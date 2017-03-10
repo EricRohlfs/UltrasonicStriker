@@ -175,20 +175,18 @@ def strike():
 
 
 # STRIKER SERVO
-striker_direction = Motor([striker_stepper_IN1,striker_stepper_IN2,striker_stepper_IN3,striker_stepper_IN4])
 
-def turn_striker(direction):
+striker_direction = Motor([striker_stepper_IN1,striker_stepper_IN2,striker_stepper_IN3,striker_stepper_IN4])
+striker_direction.mode = 2
+
+
+
+def turn_striker(degrees):
+        striker_direction.rpm = 5
         m = striker_direction
-        m.rpm = 5
         print "Pause in seconds: " + `m._T`
-        m.move_to(90)
-        time.sleep(1)
-        m.move_to(0)
-        time.sleep(1)
-        m.mode = 2
-        m.move_to(90)
-        time.sleep(1)
-        m.move_to(0)
+        #m.mode = 2
+        m.move_to(degrees)
        #GPIO.cleanup()
 
 # Keyboard stuff
@@ -196,6 +194,15 @@ def turn_striker(direction):
 import Tkinter as tk
 
 class MyFrame(tk.Frame):
+    _striker_last = 0
+    
+    @property
+    def striker_last(self):
+        return self._striker_last
+    @striker_last.setter
+    def striker_last(self,value):
+        type(self)._striker_last = value
+    
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         # method call counter
@@ -204,7 +211,15 @@ class MyFrame(tk.Frame):
         root.bind('<KeyPress>', self.key_press)
         root.bind('<KeyRelease>', self.key_release)
 
-    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,l
+   
+     
+     #def get_striker_last():
+     #   return striker_last
+
+     #def set_striker_last(degrees):
+     #   striker_last = degrees
+
+    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,2,3
     def key_press(self, event):
         if self.afterId != None:
             self.after_cancel( self.afterId )
@@ -263,9 +278,14 @@ class MyFrame(tk.Frame):
               pwm.setPWMFreq(50)
               #pwm.setPWM(4, 0, servomax)
               text.insert("end", "ultrasonic servo")
-            elif event.char == "l":
-              turn_striker(0)
+            elif event.char == "2":
+              self.striker_last = self.striker_last + 20
+              turn_striker(self.striker_last)
               text.insert('end',"turning striker")
+            elif event.char == "3":
+              self.striker_last = self.striker_last - 20    
+              turn_striker(self.striker_last)
+              text.insert('end',"turning striker")   
              
 
     def key_release(self, event):
