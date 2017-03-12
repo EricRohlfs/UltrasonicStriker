@@ -174,12 +174,10 @@ def strike():
        #gpio.output(striker_gpio2, gpio.LOW)
 
 
-# STRIKER SERVO
+# STRIKER STEPPER
 
 striker_direction = Motor([striker_stepper_IN1,striker_stepper_IN2,striker_stepper_IN3,striker_stepper_IN4])
 striker_direction.mode = 2
-
-
 
 def turn_striker(degrees):
         striker_direction.rpm = 5
@@ -189,6 +187,15 @@ def turn_striker(degrees):
         m.move_to(degrees)
        #GPIO.cleanup()
 
+# STRIKER SERVO moves the striker out of the way of the sonic sensor
+
+def hide_striker(up_down):
+        if up_down == 1:
+          pwm.setPWM(4, 0, 475)
+        elif up_down == 0:
+          pwm.setPWM(4,0,230)  
+        #return up_down
+
 # Keyboard stuff
 
 import Tkinter as tk
@@ -196,12 +203,21 @@ import Tkinter as tk
 class MyFrame(tk.Frame):
     _striker_last = 0
     
+    _striker_updown = 0
+
     @property
     def striker_last(self):
         return self._striker_last
     @striker_last.setter
     def striker_last(self,value):
         type(self)._striker_last = value
+
+    @property
+    def striker_updown(self):
+        return self._striker_updown
+    @striker_updown.setter
+    def striker_last(self,value):
+        type(self)._striker_updown = value
     
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -285,8 +301,12 @@ class MyFrame(tk.Frame):
             elif event.char == "3":
               self.striker_last = self.striker_last - 20    
               turn_striker(self.striker_last)
-              text.insert('end',"turning striker")   
-             
+              text.insert('end',"turning striker")
+            elif event.char == "9":
+              hide_striker(self.striker_updown)
+              self.striker_updown = 1 - self.striker_updown
+              text.insert('end',"striker up down " )
+              
 
     def key_release(self, event):
         self.afterId = self.after_idle( self.process_release, event )
