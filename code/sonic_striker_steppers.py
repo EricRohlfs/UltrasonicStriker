@@ -64,6 +64,8 @@ class Motor(object):
             else:
                 self._move_cw_3(steps / 8)
         self.step_angle = target_step_angle
+        self.__clear()
+        
 
     def __clear(self):
         GPIO.output(self.P1, 0)
@@ -86,6 +88,7 @@ class Motor(object):
             GPIO.output(self.P4, 0)
             GPIO.output(self.P2, 1)
             sleep(self._T * 2)
+        self.__clear()
 
     def _move_cw_2(self, big_steps):
         self.__clear()
@@ -102,6 +105,7 @@ class Motor(object):
             GPIO.output(self.P3, 0)
             GPIO.output(self.P1, 1)
             sleep(self._T * 2)
+        self.__clear()
 
     def _move_acw_3(self, big_steps):
         self.__clear()
@@ -122,6 +126,7 @@ class Motor(object):
             sleep(self._T)
             GPIO.output(self.P4, 1)
             sleep(self._T)
+        self.__clear()
 
     def _move_cw_3(self, big_steps):
         self.__clear()
@@ -142,6 +147,7 @@ class Motor(object):
             sleep(self._T)
             GPIO.output(self.P4, 1)
             sleep(self._T)
+        self.__clear()
 
 
 if __name__ == "__main__":
