@@ -1,9 +1,9 @@
 #!/usr/bin/python
-#Working SRC 2017 Code for 4 Servo Control 
+#Working SRC 2017 Code for 4 Servo Control
 #2 Drive wheels, 1 Gripper and 1 Arm
 #Revised 11.29.16 - Kevin Pace
 
-# http://belikeotherpeople.co.uk/elevatedtopography/?p=138 
+# http://belikeotherpeople.co.uk/elevatedtopography/?p=138
 import sys
 import threading
 from Adafruit_PWM_Servo_Driver import PWM
@@ -84,7 +84,7 @@ def ServoStop(channel):
 
 
 #for the turn left and turn right functions, edit the sleep values for back up and turn to get the servo timing correct
-def turnLeft(): 
+def turnLeft():
         print "right button pressed!"
         #back up
         ServoClockwise(servoLeft)
@@ -137,18 +137,18 @@ def sonic_get_distance():
     pulse_start = time.time()
     pulse_end = time.time()
     #save startTime
-    while gpio.input(GPIO_ECHO)==0:        
+    while gpio.input(GPIO_ECHO)==0:
        pulse_start = time.time()
     #save arrivalTime
     while gpio.input(GPIO_ECHO)==1:
-       pulse_end = time.time()     
+       pulse_end = time.time()
        #stop runaway loop
-       counter = pulse_end - pulse_start 
+       counter = pulse_end - pulse_start
        if counter > 2:
                return 0
-       
+
     pulse_duration = pulse_end - pulse_start
-    distance = pulse_duration * 17150 
+    distance = pulse_duration * 17150
     #distance = (pulse_duration * 34300) / 2
     distance = round(distance,2)
         #gpio.cleanup()
@@ -162,20 +162,20 @@ def sonic_get_distance():
 #            dist = distance()
 #            print ("Measured Distance = %.1f cm" % dist)
 #            time.sleep(1)
- 
+
         # Reset by pressing CTRL + C
 #    except KeyboardInterrupt:
 #        print("Measurement stopped by User")
-#        GPIO.cleanup()   
+#        GPIO.cleanup()
 
 
-# STRIKER 
+# STRIKER
 """
 Using an universal power door actuator and an L298N H-Bridge
 the code will move the actuator forward, wait, then retract
 """
-gpio.setup(striker_gpio1, gpio.OUT) 
-gpio.setup(striker_gpio2, gpio.OUT) 
+gpio.setup(striker_gpio1, gpio.OUT)
+gpio.setup(striker_gpio2, gpio.OUT)
 
 def strike():
        #forward
@@ -216,7 +216,7 @@ def hide_striker(up_down):
 import Tkinter as tk
 
 class MyFrame(tk.Frame):
-    _striker_last = 0 
+    _striker_last = 0
     _striker_updown = 0 #either 0 or 1
     _sonic_last = 0 # could break wires if we do a full turn
 
@@ -240,7 +240,7 @@ class MyFrame(tk.Frame):
     @striker_updown.setter
     def striker_last(self,value):
         type(self)._striker_updown = value
-    
+
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         # method call counter
@@ -248,7 +248,7 @@ class MyFrame(tk.Frame):
         self.afterId = None
         root.bind('<KeyPress>', self.key_press)
         root.bind('<KeyRelease>', self.key_release)
-        
+
 
     #keys in use w,s,k,z,a,u,d,c,o,t,g,n,1,2,3,4,5
     def key_press(self, event):
@@ -257,7 +257,7 @@ class MyFrame(tk.Frame):
             self.afterId = None
         else:
             #print 'key pressed %s' % event.char
-                
+
             if event.char == "K" or event.keysym == 'Escape':
               text.insert('end', ' Quit ')
               pwm.setPWM(0, 0, servoZero)
@@ -284,12 +284,13 @@ class MyFrame(tk.Frame):
               text.insert('end', ' LEFT_TURN ')
               ServoClockwise(servoLeft)
               ServoClockwise(servoRight)
-            elif event.char == "u":
-              text.insert('end', ' UP ')
-              ServoClockwise(servoLift)
-            elif event.char == "d":
-              text.insert('end', ' DOWN ') 
-              ServoCounterClockwise(servoLift) 
+            #elif event.char == "u":
+            #  text.insert('end', ' UP ')
+            #  ServoClockwise(servoLift)
+            #elif event.char == "d":
+            #  text.insert('end', ' DOWN ')
+            #  ServoCounterClockwise(servoLift)
+
             #servo striker
             elif event.char in ["1","5"]:
               hide_striker(self.striker_updown)
@@ -300,26 +301,25 @@ class MyFrame(tk.Frame):
               turn_striker(self.striker_last)
               text.insert('end',"turning striker")
             elif event.char == "3":
-              self.striker_last = self.striker_last - 10    
+              self.striker_last = self.striker_last - 10
               turn_striker(self.striker_last)
               text.insert('end',"turning striker")
             elif event.char == "4":
               text.insert('end',' strike ')
               strike()
             elif event.char =="6":
-              #d = sonic_get_distance()
               ds = "%f cm " % sonic_get_distance()
-              text.insert('end',"Distance: " + ds)  
-            elif event.char == "7":       
+              text.insert('end',"Distance: " + ds)
+            elif event.char == "7":
               self.sonic_last = self.sonic_last - 10
               turn_sonic(self.sonic_last)
-              text.insert('end'," " + str(self.sonic_last) + " ") 
+              text.insert('end'," " + str(self.sonic_last) + " ")
             elif event.char == "8":
               self.sonic_last = self.sonic_last + 10
               turn_sonic(self.sonic_last)
-              text.insert('end'," " + str(self.sonic_last) + " ") 
-              
-              
+              text.insert('end'," " + str(self.sonic_last) + " ")
+
+
 
     def key_release(self, event):
         self.afterId = self.after_idle( self.process_release, event )
