@@ -49,8 +49,8 @@ striker_stepper_IN4 = 35 #gpio19
 
 # ULTRASONIC
 #set GPIO Pins
-GPIO_TRIGGER = 38 #gpio20
-GPIO_ECHO = 40 #gpio21
+GPIO_TRIGGER = 40 #gpio21
+GPIO_ECHO = 38 #gpio20
 
 sonic_in1 = 7 #gipo4
 sonic_in2 = 11 #gpio17
@@ -114,15 +114,15 @@ def turnRight():
 sonic_direction = Motor([sonic_in1,sonic_in2,sonic_in3,sonic_in4])
 #sonic_direction.mode = 2
 def turn_sonic(degrees):
-       
         sonic_direction.rpm = 5
         mm = sonic_direction
         print "Pause in seconds: " + `mm._T`
         #m.mode = 2
         mm.move_to(degrees)
-       #GPIO.cleanup()
+        #GPIO.cleanup()
 
 
+#setup Ultrasonic Sensor
 #set GPIO direction
 gpio.setup(GPIO_TRIGGER,gpio.OUT)
 gpio.setup(GPIO_ECHO,gpio.IN)
@@ -131,24 +131,21 @@ gpio.output(GPIO_TRIGGER, False)
 
 #The HC-SR04 sensor requires a short 10uS pulse to trigger the module, which will cause the sensor to start the ranging program (8 ultrasound bursts at 40 kHz) in order to obtain an echo response. So, to create our trigger pulse, we set out trigger pin high for 10uS then set it low again.
 def sonic_get_distance():
-    print("starting sonic")    
     gpio.output(GPIO_TRIGGER, True)
     time.sleep(0.00001)
     gpio.output(GPIO_TRIGGER, False)
     pulse_start = time.time()
     pulse_end = time.time()
-    counter = 0
     #save startTime
     while gpio.input(GPIO_ECHO)==0:        
        pulse_start = time.time()
     #save arrivalTime
     while gpio.input(GPIO_ECHO)==1:
+       pulse_end = time.time()     
+       #stop runaway loop
        counter = pulse_end - pulse_start 
-       # print(str(counter))
-       #stop runaway loop 
-       if counter > 1:
+       if counter > 2:
                return 0
-       pulse_end = time.time()
        
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150 
@@ -170,12 +167,6 @@ def sonic_get_distance():
 #    except KeyboardInterrupt:
 #        print("Measurement stopped by User")
 #        GPIO.cleanup()   
-
-#Striker Stepper control
-#def striker_rotate_left():
-#        pwm.setPWM(channel, 0, servoMin)
-#        striker_stepper_IN1
-
 
 
 # STRIKER 
@@ -211,7 +202,6 @@ def turn_striker(degrees):
         print "Pause in seconds: " + `m._T`
         #m.mode = 2
         m.move_to(degrees)
-       #GPIO.cleanup()
 
 # STRIKER SERVO moves the striker out of the way of the sonic sensor
 
@@ -267,27 +257,30 @@ class MyFrame(tk.Frame):
             self.afterId = None
         else:
             #print 'key pressed %s' % event.char
-            if event.char == "w":
-              text.insert('end', ' FORWARD ')
-              ServoCounterClockwise(servoLeft)
-              ServoClockwise(servoRight)
-            elif event.char == "s":
-              text.insert('end', ' RIGHT_TURN ')
-              ServoCounterClockwise(servoLeft)
-              ServoCounterClockwise(servoRight)
-            elif event.char == "K":
+                
+            if event.char == "K" or event.keysym == 'Escape':
               text.insert('end', ' Quit ')
               pwm.setPWM(0, 0, servoZero)
+              #put motors back to original position
               #so we don't have to spend so much time calibrating
               turn_sonic(0)
               turn_striker(0)
               hide_striker(1)
               root.destroy()
-            elif event.char == "z":
+
+            elif event.char == "w" or event.keysym == 'Up':
+              text.insert('end', ' FORWARD ')
+              ServoCounterClockwise(servoLeft)
+              ServoClockwise(servoRight)
+            elif event.char == "s" or event.keysym == 'Right':
+              text.insert('end', ' RIGHT_TURN ')
+              ServoCounterClockwise(servoLeft)
+              ServoCounterClockwise(servoRight)
+            elif event.char == "z" or event.keysym == 'Down':
               text.insert('end', ' BACKWARD ')
               ServoClockwise(servoLeft)
               ServoCounterClockwise(servoRight)
-            elif event.char == "a":
+            elif event.char == "a" or event.keysym == 'Left':
               text.insert('end', ' LEFT_TURN ')
               ServoClockwise(servoLeft)
               ServoClockwise(servoRight)
