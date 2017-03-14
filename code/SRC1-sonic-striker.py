@@ -131,16 +131,23 @@ gpio.output(GPIO_TRIGGER, False)
 
 #The HC-SR04 sensor requires a short 10uS pulse to trigger the module, which will cause the sensor to start the ranging program (8 ultrasound bursts at 40 kHz) in order to obtain an echo response. So, to create our trigger pulse, we set out trigger pin high for 10uS then set it low again.
 def sonic_get_distance():
+    print("starting sonic")    
     gpio.output(GPIO_TRIGGER, True)
     time.sleep(0.00001)
     gpio.output(GPIO_TRIGGER, False)
     pulse_start = time.time()
     pulse_end = time.time()
+    counter = 0
     #save startTime
-    while gpio.input(GPIO_ECHO)==0:
+    while gpio.input(GPIO_ECHO)==0:        
        pulse_start = time.time()
     #save arrivalTime
     while gpio.input(GPIO_ECHO)==1:
+       counter = pulse_end - pulse_start 
+       # print(str(counter))
+       #stop runaway loop 
+       if counter > 1:
+               return 0
        pulse_end = time.time()
        
     pulse_duration = pulse_end - pulse_start
