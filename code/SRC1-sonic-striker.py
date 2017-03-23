@@ -292,34 +292,33 @@ class MyFrame(tk.Frame):
             #  ServoCounterClockwise(servoLift)
 
             #servo striker
-            elif event.char in ["1","5"]:
-              hide_striker(self.striker_updown)
-              self.striker_updown = 1 - self.striker_updown
-              text.insert('end',"striker up down ")
-            elif event.char == "2":
-              self.striker_last = self.striker_last + 10
-              turn_striker(self.striker_last)
-              text.insert('end',"turning striker")
-            elif event.char == "3":
-              self.striker_last = self.striker_last - 10
-              turn_striker(self.striker_last)
-              text.insert('end',"turning striker")
-            elif event.char == "4":
-              text.insert('end',' strike ')
-              strike()
-            elif event.char =="6":
+            elif event.char =="1":
               ds = "%f cm " % sonic_get_distance()
               text.insert('end',"Distance: " + ds)
-            elif event.char == "7":
+            elif event.char == "2":
               self.sonic_last = self.sonic_last - 10
               turn_sonic(self.sonic_last)
               text.insert('end'," " + str(self.sonic_last) + " ")
-            elif event.char == "8":
+            elif event.char == "3":
               self.sonic_last = self.sonic_last + 10
               turn_sonic(self.sonic_last)
-              text.insert('end'," " + str(self.sonic_last) + " ")
-
-
+              text.insert('end'," " + str(self.sonic_last) + " ")    
+            elif event.char in ["5"]:
+              hide_striker(self.striker_updown)
+              self.striker_updown = 1 - self.striker_updown
+              text.insert('end',"striker up down ")
+            elif event.char == "6":
+              self.striker_last = self.striker_last + 10
+              turn_striker(self.striker_last)
+              text.insert('end',"turning striker")
+            elif event.char == "7":
+              self.striker_last = self.striker_last - 10
+              turn_striker(self.striker_last)
+              text.insert('end',"turning striker")
+            elif event.char == "0":
+              text.insert('end',' strike ')
+              strike()
+            
 
     def key_release(self, event):
         self.afterId = self.after_idle( self.process_release, event )
@@ -329,7 +328,7 @@ class MyFrame(tk.Frame):
         ServoStop(servoRight)
         #ServoStop(servoLift)
         #ServoStop(servoGrip)
-        print 'key release %s' % event.char
+        #print 'key release %s' % event.char
         self.afterId = None
 
 
@@ -343,7 +342,7 @@ root.geometry('800x600')
 root.attributes('-fullscreen', False)
 text = tk.Text(root, background='black', foreground='white', font=('Comic Sans MS', 12))
 text.pack()
-text.insert('end', 'STEM TRI-Fecta 2017')
+text.insert('end', 'Ultrasonic Striker for STEM Robotics')
 app1 = MyFrame(root)
 root.mainloop()
 
