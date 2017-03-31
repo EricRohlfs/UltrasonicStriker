@@ -93,7 +93,7 @@ Price: $29.00 - $39.00
 
 Raspberry Pi
 
-![Raspberry Pi](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/raspberry-pi.png)
+![Raspberry Pi](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/raspberry-pi.jpg)
 
 # Miscellaneous Supplies
 
