@@ -24,4 +24,18 @@ There is some fabrication needed to make the striker.
 The striker is a common car door locker.  
 ![Universal Car Door Lock Actuator](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UniversalDoorLockActuator.jpg)
 
+## The Striker Driver
 
+LM298 board from ebay for about $2.00
+
+![LM298](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/LM298.jpg)
+
+## Power Supply
+
+Any 5 volt portable power bank.
+![Power Bank](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/5vPortablePowerBank.jpg)
+
+## Power Converter
+
+We need this to convert 5 volts to 12 volt.  We are using a buck type of converter.
+![Buck Power Up](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/xl6009-PowerConverter.jpg)
