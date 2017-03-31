@@ -9,12 +9,9 @@ There is some fabrication needed to make the striker.
 * Measuring distance with ultrasonic range finder
 * Making stepper motors go left or right
 * Making servo motors go left or right
+* Making a linear actuator go forward and backward (universal car door unlock actuator)
 * Convert electricity from 5v to 12v.
-* python coding
-
-# Assumptions
-
-The main diagram assumes a 5v battery.  If 12 volt, less parts are used.
+* Writing or organizing code using python
 
 # Images
 
