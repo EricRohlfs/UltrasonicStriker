@@ -49,7 +49,20 @@ We need to create a voltage divider using two resistors to make this work.
 
 ## Stepper Motors
 
-The stepper motor is a 28BYJ-48.  About $2.00
+The stepper motor is a 28BYJ-48.  About $3.00 including the driver.
+
 The motor driver is the unl2003.
 
 ![Motor and Driver](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/unl2003-stepper-motor-driver.JPG)
+
+## Servo Motors
+
+## Servo Motor Driver 
+Adafruit 16 Channel PWM Servo Hat
+
+or if you are on a budget (please support Adafruit if you can, they have made STEM easy for all of us.)
+
+PCA9685 16 Channel 12-bit PWM 
+
+![PWM Servo Hat](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/adafruit-16channel-pwm-servo-hat.png)
+
