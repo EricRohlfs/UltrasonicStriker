@@ -15,5 +15,13 @@ There is some fabrication needed to make the striker.
 
 # Images
 
-![alt text](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png "Wiring Diagram")
+![Wiring Diagram](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png "Wiring Diagram")
+
+# Parts Explained
+
+## The Striker
+
+The striker is a common car door locker.  
+![Universal Car Door Lock Actuator](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png = 250x250)
+
 
