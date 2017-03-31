@@ -11,7 +11,7 @@ There is some fabrication needed to make the striker.
 * Making servo motors go left or right
 * Making a linear actuator go forward and backward (universal car door unlock actuator)
 * Convert electricity from 5v to 12v.
-* Writing or organizing code using python
+* Open and run a python program using IDLE
 
 # Images
 
@@ -21,21 +21,29 @@ There is some fabrication needed to make the striker.
 
 ## The Striker
 
+Price: $3.50
+
 The striker is a common car door locker.  
 ![Universal Car Door Lock Actuator](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UniversalDoorLockActuator.jpg)
 
 ## The Striker Driver
 
-LM298 board from ebay for about $2.00
+Price: $2.00
+
+LM298 board. 
 
 ![LM298](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/LM298.jpg)
 
 ## Power Supply
 
+Price: $10.00
+
 Any 5 volt portable power bank.
 ![Power Bank](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/5vPortablePowerBank.jpg)
 
 ## Power Converter
+Price: $3.50
+
 
 We need this to convert 5 volts to 12 volt.  We are using a buck type of converter.
 See the very small brass screw, we need to use an Ohm meter and turn the screw to make sure we output 12v and not 35v.  35v will blow up our electronics.
@@ -44,12 +52,16 @@ See the very small brass screw, we need to use an Ohm meter and turn the screw t
 
 ## Ultrasonic Sensor
 
+Price: $2.00
+
 We need to create a voltage divider using two resistors to make this work.
 ![HC-SR04](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/HC-SR04-Ultrasonic-Sensor.jpg)
 
 ## Stepper Motors
 
-The stepper motor is a 28BYJ-48.  About $3.00 including the driver.
+Price: $3.00
+
+The stepper motor is a 28BYJ-48. 
 
 The motor driver is the unl2003.
 
@@ -57,12 +69,36 @@ The motor driver is the unl2003.
 
 ## Servo Motors
 
+Price: $10.00
+
+This is NOT the continuous rotation servo used as the wheels of the robot.
+
+![Standard Servo](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/futaba-s3004-standard-servo_1.jpg)
+
 ## Servo Motor Driver 
+
+Price: $20.00 or $3.00
+
 Adafruit 16 Channel PWM Servo Hat
 
 or if you are on a budget (please support Adafruit if you can, they have made STEM easy for all of us.)
 
 PCA9685 16 Channel 12-bit PWM 
 
-![PWM Servo Hat](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/adafruit-16channel-pwm-servo-hat.png)
+![PWM Servo Hat](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/adafruit-16-channel-pwm-servo-hat.png)
 
+# Brains
+
+Price: $29.00 - $39.00
+
+Raspberry Pi
+
+![Raspberry Pi](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/raspberry-pi.png)
+
+# Miscellaneous Supplies
+
+* JB Weld
+* Wooden Dowel - more info soon
+* Jumper Wires - mostly female-to-female 
+* Few resistors
+* Soldering Iron and Solder
