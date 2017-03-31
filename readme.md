@@ -15,5 +15,54 @@ There is some fabrication needed to make the striker.
 
 # Images
 
-![alt text](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png "Wiring Diagram")
+![Wiring Diagram](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png "Wiring Diagram")
+
+# Parts Explained
+
+## The Striker
+
+The striker is a common car door locker.  
+![Universal Car Door Lock Actuator](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UniversalDoorLockActuator.jpg)
+
+## The Striker Driver
+
+LM298 board from ebay for about $2.00
+
+![LM298](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/LM298.jpg)
+
+## Power Supply
+
+Any 5 volt portable power bank.
+![Power Bank](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/5vPortablePowerBank.jpg)
+
+## Power Converter
+
+We need this to convert 5 volts to 12 volt.  We are using a buck type of converter.
+See the very small brass screw, we need to use an Ohm meter and turn the screw to make sure we output 12v and not 35v.  35v will blow up our electronics.
+![Buck Power Up](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/xl6009-PowerConverter.jpg)
+
+
+## Ultrasonic Sensor
+
+We need to create a voltage divider using two resistors to make this work.
+![HC-SR04](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/HC-SR04-Ultrasonic-Sensor.jpg)
+
+## Stepper Motors
+
+The stepper motor is a 28BYJ-48.  About $3.00 including the driver.
+
+The motor driver is the unl2003.
+
+![Motor and Driver](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/unl2003-stepper-motor-driver.JPG)
+
+## Servo Motors
+
+## Servo Motor Driver 
+Adafruit 16 Channel PWM Servo Hat
+
+or if you are on a budget (please support Adafruit if you can, they have made STEM easy for all of us.)
+
+PCA9685 16 Channel 12-bit PWM 
+
+![PWM Servo Hat](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/adafruit-16channel-pwm-servo-hat.png)
 
