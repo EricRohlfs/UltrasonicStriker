@@ -13,7 +13,7 @@ There is some fabrication needed to make the striker.
 * Convert electricity from 5v to 12v.
 * Open and run a python program using IDLE
 
-# Images
+# Overall Wiring Diagram
 
 ![Wiring Diagram](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png "Wiring Diagram")
 
