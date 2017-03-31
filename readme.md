@@ -16,5 +16,5 @@ There is some fabrication needed to make the striker.
 
 The main diagram assumes a 5v battery.  If 12 volt, less parts are used.
 
-![alt text](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/src/common/images/UltrasonicStriker.png "Wiring Diagram")
+![alt text](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png "Wiring Diagram")
 
