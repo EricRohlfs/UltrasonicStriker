@@ -22,6 +22,6 @@ There is some fabrication needed to make the striker.
 ## The Striker
 
 The striker is a common car door locker.  
-![Universal Car Door Lock Actuator](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UltrasonicStriker.png)
+![Universal Car Door Lock Actuator](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/UniversalDoorLockActuator.jpg)
 
 
