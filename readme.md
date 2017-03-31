@@ -45,4 +45,11 @@ See the very small brass screw, we need to use an Ohm meter and turn the screw t
 ## Ultrasonic Sensor
 
 We need to create a voltage divider using two resistors to make this work.
-![HC-SR04](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/hc-sr04-ultrasonic-sensor.jpg)
+![HC-SR04](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/HC-SR04-Ultrasonic-Sensor.jpg)
+
+## Stepper Motors
+
+The stepper motor is a 28BYJ-48.  About $2.00
+The motor driver is the unl2003.
+
+![Motor and Driver](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/unl2003-stepper-motor-driver.jpg)
