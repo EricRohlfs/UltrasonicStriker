@@ -52,4 +52,4 @@ We need to create a voltage divider using two resistors to make this work.
 The stepper motor is a 28BYJ-48.  About $2.00
 The motor driver is the unl2003.
 
-![Motor and Driver](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/unl2003-stepper-motor-driver.jpg)
+![Motor and Driver](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/unl2003-stepper-motor-driver.JPG)
