@@ -36,6 +36,8 @@ servoRight = 1
 servoLift = 2
 #servoGrip = 3
 servo_echo = 4
+grip_left = 6
+grip_right = 7
 
 #Striker actuator
 striker_gpio1 = 15 #gpio22
@@ -58,7 +60,6 @@ sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
 gpio.setmode(gpio.BOARD)
-
 
 #.5ms 1.5ms 2.5ms
 
@@ -85,19 +86,19 @@ def ServoStop(channel):
 
 #for the turn left and turn right functions, edit the sleep values for back up and turn to get the servo timing correct
 def turnLeft():
-        print "right button pressed!"
+       # print "right button pressed!"
         #back up
         ServoClockwise(servoLeft)
         ServoCounterClockwise(servoRight)
         time.sleep(1.2) #edit this
         #turn left
-        print "second part of left turn"
+       # print "second part of left turn"
         ServoClockwise(servoLeft)
         ServoClockwise(servoRight)
         time.sleep(0.8) #edit this
 
 def turnRight():
-        print "left button pressed"
+       # print "left button pressed"
         #back up
         ServoClockwise(servoLeft)
         ServoCounterClockwise(servoRight)
@@ -116,7 +117,7 @@ sonic_direction = Motor([sonic_in1,sonic_in2,sonic_in3,sonic_in4])
 def turn_sonic(degrees):
         sonic_direction.rpm = 5
         mm = sonic_direction
-        print "Pause in seconds: " + `mm._T`
+        #print "Pause in seconds: " + `mm._T`
         #m.mode = 2
         mm.move_to(degrees)
         #GPIO.cleanup()
@@ -211,6 +212,17 @@ def hide_striker(up_down):
         elif up_down == 0:
           pwm.setPWM(servo_echo,0,230)
 
+# 0 = open, 1 = closed   
+def grabber(open_closed):
+        #close
+        if direction == 1: 
+                pwm.setPWM(grip_left,0,400)
+                pwm.setPWM(grip_rigt,0,400)
+        #open        
+        if direction == 0:
+                pwm.setPWM(grip_left,0,200)
+                pwm.setPWM(grip_right,0,200)
+        
 # Keyboard stuff
 
 import Tkinter as tk
@@ -219,6 +231,7 @@ class MyFrame(tk.Frame):
     _striker_last = 0
     _striker_updown = 0 #either 0 or 1
     _sonic_last = 0 # could break wires if we do a full turn
+    _grabber_state = 0
 
     @property
     def striker_last(self):
@@ -226,6 +239,13 @@ class MyFrame(tk.Frame):
     @striker_last.setter
     def striker_last(self,value):
         type(self)._striker_last = value
+    
+    @property
+    def grabber_state(self):
+        return self._grabber_state
+    @grabber_state.setter
+    def grabber_state(self,value):
+        type(self)._grabber_state = value
 
     @property
     def sonic_last(self):
