@@ -6,6 +6,8 @@ There is some fabrication needed to make the striker.
 
 # Things to learn.
 
+Look in the HowTo folder to see step by step details.
+
 * Measuring distance with ultrasonic range finder
 * Making stepper motors go left or right
 * Making servo motors go left or right
@@ -109,3 +111,4 @@ Raspberry Pi
 * Jumper Wires - mostly female-to-female 
 * Few resistors
 * Soldering Iron and Solder
+* Old USB cable you can destroy
