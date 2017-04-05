@@ -81,9 +81,9 @@ Price: $20.00 or $3.00
 
 Adafruit 16 Channel PWM Servo Hat
 
-or if you are on a budget (please support Adafruit if you can, they have made STEM easy for all of us.)
+or if you are on a budget you can use the PCA9685 16 Channel 12-bit PWM 
 
-PCA9685 16 Channel 12-bit PWM 
+(Please support Adafruit if you can, they have made STEM easy for all of us.)
 
 ![PWM Servo Hat](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/adafruit-16-channel-pwm-servo-hat.png)
 
