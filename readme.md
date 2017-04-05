@@ -109,3 +109,4 @@ Raspberry Pi
 * Jumper Wires - mostly female-to-female 
 * Few resistors
 * Soldering Iron and Solder
+* Old USB cable you can destroy
