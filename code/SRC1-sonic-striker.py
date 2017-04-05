@@ -231,7 +231,7 @@ class MyFrame(tk.Frame):
     _striker_last = 0
     _striker_updown = 0 #either 0 or 1
     _sonic_last = 0 # could break wires if we do a full turn
-    _grabber_state = 0
+    _grabber_last = 0 
 
     @property
     def striker_last(self):
@@ -241,11 +241,11 @@ class MyFrame(tk.Frame):
         type(self)._striker_last = value
     
     @property
-    def grabber_state(self):
-        return self._grabber_state
-    @grabber_state.setter
-    def grabber_state(self,value):
-        type(self)._grabber_state = value
+    def grabber_last(self):
+        return self._grabber_last
+    @grabber_last.setter
+    def grabber_last(self,value):
+        type(self)._grabber_last = value
 
     @property
     def sonic_last(self):
@@ -335,6 +335,8 @@ class MyFrame(tk.Frame):
               self.striker_last = self.striker_last - 10
               turn_striker(self.striker_last)
               text.insert('end',"turning striker")
+            elif event.char == "9"
+                self.grabber_last = 1 - self.grabber_last
             elif event.char == "0":
               text.insert('end',' strike ')
               strike()
