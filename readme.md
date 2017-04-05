@@ -44,7 +44,6 @@ Any 5 volt portable power bank.
 ## Power Converter
 Price: $3.50
 
-
 We need this to convert 5 volts to 12 volt.  We are using a buck type of converter.
 See the very small brass screw, we need to use an Ohm meter and turn the screw to make sure we output 12v and not 35v.  35v will blow up our electronics.
 ![Buck Power Up](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/xl6009-PowerConverter.jpg)
