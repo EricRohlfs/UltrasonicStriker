@@ -42,6 +42,7 @@ Any 5 volt portable power bank.
 ![Power Bank](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/5vPortablePowerBank.jpg)
 
 ## Power Converter
+
 Price: $3.50
 
 We need this to convert 5 volts to 12 volt.  We are using a buck type of converter.
@@ -53,10 +54,17 @@ See the very small brass screw, we need to use an Ohm meter and turn the screw t
 
 Price: $2.00
 
+Measures distance using sound
+
 We need to create a voltage divider using two resistors to make this work.
+
 ![HC-SR04](https://github.com/ericrohlfs/ultrasonicstriker/raw/master/images/HC-SR04-Ultrasonic-Sensor.jpg)
 
 ## Stepper Motors
+
+The stepper motors are more precise than servos and we use them to turn the striker head so the ball goes where we want it to go.
+
+Currently we are using a second stepper to turn the ultrasonic range finder, but we may no need this, and instead will turn the whole robot.
 
 Price: $3.00
 
