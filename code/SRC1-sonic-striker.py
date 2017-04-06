@@ -215,13 +215,13 @@ def hide_striker(up_down):
 # 0 = open, 1 = closed   
 def grabber(open_closed):
         #close
-        if direction == 1: 
-                pwm.setPWM(grip_left,0,400)
-                pwm.setPWM(grip_rigt,0,400)
-        #open        
-        if direction == 0:
-                pwm.setPWM(grip_left,0,200)
+        if open_closed == 1: 
+                pwm.setPWM(grip_left,0,300)
                 pwm.setPWM(grip_right,0,200)
+        #open        
+        if open_closed == 0:
+                pwm.setPWM(grip_left,0,200)
+                pwm.setPWM(grip_right,0,300)
         
 # Keyboard stuff
 
@@ -335,8 +335,9 @@ class MyFrame(tk.Frame):
               self.striker_last = self.striker_last - 10
               turn_striker(self.striker_last)
               text.insert('end',"turning striker")
-            elif event.char == "9"
+            elif event.char == "9":
                 self.grabber_last = 1 - self.grabber_last
+                grabber(self.grabber_last)
             elif event.char == "0":
               text.insert('end',' strike ')
               strike()
