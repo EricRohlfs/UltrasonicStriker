@@ -9,12 +9,15 @@ import threading
 from Adafruit_PWM_Servo_Driver import PWM
 from sonic_striker_steppers import Motor
 import time
+from DistanceSensor import DistanceSensor 
+
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
 except RuntimeError:
         print "error importing the gpio library which is probably because you need to run this program with sudo"
 
 gpio.cleanup()
+gpio.setmode(gpio.BOARD)
 
 # ===========================================================================
 # Example Code
@@ -25,6 +28,7 @@ gpio.cleanup()
 pwm = PWM(0x41)
 # Note if you'd like more debug output you can instead run:
 #pwm = PWM(0x40, debug=True)
+
 
 servoMin = 150  # Min pulse length out of 4096
 servoMax = 600  # Max pulse length out of 4096
@@ -53,13 +57,15 @@ striker_stepper_IN4 = 35 #gpio19
 #set GPIO Pins
 GPIO_TRIGGER = 40 #gpio21
 GPIO_ECHO = 38 #gpio20
+ball_sensor = DistanceSensor(gpio, GPIO_ECHO, GPIO_TRIGGER)
+#wall_sensor =
+
 
 sonic_in1 = 7 #gipo4
 sonic_in2 = 11 #gpio17
 sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
-gpio.setmode(gpio.BOARD)
 
 #.5ms 1.5ms 2.5ms
 
@@ -122,52 +128,7 @@ def turn_sonic(degrees):
         mm.move_to(degrees)
         #GPIO.cleanup()
 
-
-#setup Ultrasonic Sensor
-#set GPIO direction
-gpio.setup(GPIO_TRIGGER,gpio.OUT)
-gpio.setup(GPIO_ECHO,gpio.IN)
-# Turn ultrasonic sensor off
-gpio.output(GPIO_TRIGGER, False)
-
-#The HC-SR04 sensor requires a short 10uS pulse to trigger the module, which will cause the sensor to start the ranging program (8 ultrasound bursts at 40 kHz) in order to obtain an echo response. So, to create our trigger pulse, we set out trigger pin high for 10uS then set it low again.
-def sonic_get_distance():
-    gpio.output(GPIO_TRIGGER, True)
-    time.sleep(0.00001)
-    gpio.output(GPIO_TRIGGER, False)
-    pulse_start = time.time()
-    pulse_end = time.time()
-    #save startTime
-    while gpio.input(GPIO_ECHO)==0:
-       pulse_start = time.time()
-    #save arrivalTime
-    while gpio.input(GPIO_ECHO)==1:
-       pulse_end = time.time()
-       #stop runaway loop
-       counter = pulse_end - pulse_start
-       if counter > 2:
-               return 0
-
-    pulse_duration = pulse_end - pulse_start
-    distance = pulse_duration * 17150
-    #distance = (pulse_duration * 34300) / 2
-    distance = round(distance,2)
-        #gpio.cleanup()
-    print(distance)
-    return distance # in cm
-
-#def sonic_get_distance_loop():
-#need to do something different than this to interrupt the program
-#     try:
-#        while True:
-#            dist = distance()
-#            print ("Measured Distance = %.1f cm" % dist)
-#            time.sleep(1)
-
-        # Reset by pressing CTRL + C
-#    except KeyboardInterrupt:
-#        print("Measurement stopped by User")
-#        GPIO.cleanup()
+        
 
 
 # STRIKER
@@ -313,7 +274,7 @@ class MyFrame(tk.Frame):
 
             #servo striker
             elif event.char =="1":
-              ds = "%f cm " % sonic_get_distance()
+              ds = "%f cm " % ball_sensor.distance()
               text.insert('end',"Distance: " + ds)
             elif event.char == "2":
               self.sonic_last = self.sonic_last - 10
