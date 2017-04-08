@@ -37,12 +37,11 @@ class ServoWheels:
           self.basics.servo_counter_clockwise(self._left_wheel)
           self.basics.servo_counter_clockwise(self._right_wheel)
     def foward(self):
-          self.basics.servo_counter_clockwise(self._left_wheel)
-          self.basics.servo_clockwise(self._right_wheel)
-    def backward(self):
           self.basics.servo_clockwise(self._left_wheel)
           self.basics.servo_counter_clockwise(self._right_wheel)
           
-          
+    def backward(self):
+          self.basics.servo_counter_clockwise(self._left_wheel)
+          self.basics.servo_clockwise(self._right_wheel)
           
           

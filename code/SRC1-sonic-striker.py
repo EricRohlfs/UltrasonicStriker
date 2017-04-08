@@ -2,6 +2,7 @@
 #Working SRC 2017 Code for 4 Servo Control
 #2 Drive wheels, 1 Gripper and 1 Arm
 #Revised 11.29.16 - Kevin Pace
+#Refactored / 2016-4-7 Eric Rohlfs
 
 # http://belikeotherpeople.co.uk/elevatedtopography/?p=138
 import sys
@@ -12,14 +13,13 @@ import time
 from DistanceSensor import DistanceSensor
 from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
+from Grabber import Grabber
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
 except Exception:
         print "error importing the gpio library which is probably because you need to run this program with sudo"
 
-gpio.cleanup()
-gpio.setmode(gpio.BOARD)
 
 # ===========================================================================
 # Example Code
@@ -27,26 +27,44 @@ gpio.setmode(gpio.BOARD)
 
 # Initialise the PWM device using the default address
 try:
-        pwm = PWM(0x40)
-except:
         pwm = PWM(0x41)
+except:
+        pwm = PWM(0x40)
 # Note if you'd like more debug output you can instead run:
 #pwm = PWM(0x40, debug=True)
 
-#these are pwm ports not gpio
+pwm.setPWMFreq(60) # Set frequency to 60 Hz
+
+"""
+  pwm is the ServoHat
+  pwm pins should be assigned in one place.
+  This helps keep things organized
+"""
+
+#pwm pin assignment
 left_wheel_pin = 0
 right_wheel_pin = 1
 servoLift = 2
-#servoGrip = 3
 show_hide_striker_pin = 4
-grip_left = 6
-grip_right = 7
+grip_left_pin = 6
+grip_right_pin = 7
 
-#Striker actuator
+
+"""
+  GPIO pins are assigned here to keep them organized
+  GPIO numbers are unusal,
+    they have different numbers for each pin depending on the mode.
+    if you are having issues google "raspberry pi and GPIO"
+"""
+#GPIO pin assignment
+gpio.setmode(gpio.BOARD)
+
+#GPIO Striker Actuator
 striker_pin = 15 #gpio22
 striker_reverse_pin = 16 #gpio23
 
 # four gpio pins are needed for the striker steper
+# Note: not all robots have a rotating striker head.
 striker_stepper_IN1 = 32 #gpio12
 striker_stepper_IN2 = 33 #gpio13
 striker_stepper_IN3 = 36 #gpio16
@@ -54,60 +72,58 @@ striker_stepper_IN4 = 35 #gpio19
 
 # ULTRASONIC
 #set GPIO Pins
-ball_trigger = 40 #gpio21
-ball_echo = 38 #gpio20
-ball_sensor = DistanceSensor(gpio, ball_echo, ball_trigger)
+ball_trigger_pin = 40 #gpio21
+ball_echo_pin = 38 #gpio20
+
 
 #wall_trigger = None
 #wall_echo = None
 #wall_sensor = DistanceSensor(gpio, wall_echo, wall_trigger)
 
-
+# Stepper motor to turn the Ultrasonic Sensor
+#  This may go away and instead we will just turn the whole robot.
 sonic_in1 = 7 #gipo4
 sonic_in2 = 11 #gpio17
 sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
+# ULTRASONIC STEPPER
+sonic_motor = Motor([sonic_in1,sonic_in2,sonic_in3,sonic_in4])
+
+#construct a ball sensor to find the ball using a Distance Sensor
+ball_sensor = DistanceSensor(gpio, ball_echo_pin, ball_trigger_pin, sonic_motor)
+
+# The wheels that make the robot go forward and backward
 wheels = ServoWheels(pwm,left_wheel_pin, right_wheel_pin)
+
+# access to the raw servo commands
+# mainly used to stop motors on key_up
 servo = ServoBasics(pwm)
 
-# ULTRASONIC STEPPER
 
-
-sonic_direction = Motor([sonic_in1,sonic_in2,sonic_in3,sonic_in4])
-#sonic_direction.mode = 2
-def turn_sonic(degrees):
-        sonic_direction.rpm = 5
-        mm = sonic_direction
-        mm.move_to(degrees)
-
-# STRIKER
 """
 Using an universal power door actuator and an L298N H-Bridge
 the code will move the actuator forward, wait, then retract
 """
-wedge_motor = Motor([striker_stepper_IN1,striker_stepper_IN2,striker_stepper_IN3,striker_stepper_IN4])
+# STRIKER
+wedge_motor = Motor([striker_stepper_IN1,
+                     striker_stepper_IN2,
+                     striker_stepper_IN3,
+                     striker_stepper_IN4])
 
 striker = StrikerCommands(gpio,
                           striker_pin,
                           striker_reverse_pin,
                           pwm,
                           wedge_motor,
-                          show_hide_striker_pin
-                          )
+                          show_hide_striker_pin)
 
+grabber = Grabber(pwm,
+                  grip_left_pin,
+                  grip_right_pin,
+                  servo_min = 200,
+                  servo_max=300)
 
-
-# 0 = open, 1 = closed   
-def grabber(open_closed):
-        #close
-        if open_closed == 1: 
-                pwm.setPWM(grip_left,0,300)
-                pwm.setPWM(grip_right,0,200)
-        #open        
-        if open_closed == 0:
-                pwm.setPWM(grip_left,0,200)
-                pwm.setPWM(grip_right,0,300)
         
 # Keyboard stuff
 
@@ -115,7 +131,6 @@ import Tkinter as tk
 
 class MyFrame(tk.Frame):
     _sonic_last = 0 # could break wires if we do a full turn
-    _grabber_last = 0 
 
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -134,43 +149,30 @@ class MyFrame(tk.Frame):
         else:
             #print 'key pressed %s' % event.char
 
+            #Shutdown robot safetly when the escape key is pressed.    
             if event.char == "K" or event.keysym == 'Escape':
-              text.insert('end', ' Quit ')
-              
+              text.insert('end', ' Quit ')  
               #put motors back to original position
               #so we don't have to spend so much time calibrating
-              turn_sonic(0)
-              striker.turn_wedge_zero(0) #home or center
+              ball_sensor.turn_to_zero()
+              striker.turn_wedge_zero() #home or center
               root.destroy()
 
+            #Wheels
             elif event.char == "w" or event.keysym == 'Up':
               text.insert('end', ' FORWARD ')
               wheels.foward() 
-              #ServoCounterClockwise(servoLeft)
-              #ServoClockwise(servoRight)
             elif event.char == "s" or event.keysym == 'Right':
               text.insert('end', ' RIGHT_TURN ')
               wheels.turn_right()
-              #ServoCounterClockwise(servoLeft)
-              #ServoCounterClockwise(servoRight)
             elif event.char == "z" or event.keysym == 'Down':
               text.insert('end', ' BACKWARD ')
               wheels.backward()
-              #ServoClockwise(servoLeft)
-              #ServoCounterClockwise(servoRight)
             elif event.char == "a" or event.keysym == 'Left':
               text.insert('end', ' LEFT_TURN ')
               wheels.turn_left() 
-              #ServoClockwise(servoLeft)
-              #ServoClockwise(servoRight)
-            #elif event.char == "u":
-            #  text.insert('end', ' UP ')
-            #  ServoClockwise(servoLift)
-            #elif event.char == "d":
-            #  text.insert('end', ' DOWN ')
-            #  ServoCounterClockwise(servoLift)
-
-            #servo striker
+              
+            #Servo Striker
             elif event.char =="1":
               ds = "%f cm " % ball_sensor.distance()
               text.insert('end',"Distance: " + ds)
@@ -186,19 +188,19 @@ class MyFrame(tk.Frame):
               striker.hide_striker(self.striker_updown)
               text.insert('end',"striker up down ")
             elif event.char == "6":
+              #change the number for bigger or smaller turns  
               striker.turn_wedge(10)
               text.insert('end',"turning striker")
             elif event.char == "7":
+              #change the number for bigger or smaller turns  
               striker.turn_wedge(-10)
               text.insert('end',"turning striker")
             elif event.char == "9":
-              self.grabber_last = 1 - self.grabber_last
-              grabber(self.grabber_last)
+              grabber.grab_release()
             elif event.char == "0":
               text.insert('end',' strike ')
               striker.strike()
             
-
     def key_release(self, event):
         self.afterId = self.after_idle( self.process_release, event )
 
@@ -207,13 +209,6 @@ class MyFrame(tk.Frame):
         servo.servo_stop(right_wheel_pin)
         #print 'key release %s' % event.char
         self.afterId = None
-    
-    @property
-    def grabber_last(self):
-        return self._grabber_last
-    @grabber_last.setter
-    def grabber_last(self,value):
-        type(self)._grabber_last = value
 
     @property
     def sonic_last(self):
@@ -221,8 +216,6 @@ class MyFrame(tk.Frame):
 
 
 # Program
-pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
-
 
 root = tk.Tk()
 root.geometry('800x600')
