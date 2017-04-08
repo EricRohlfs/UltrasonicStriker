@@ -26,6 +26,8 @@ class StrikerCommands:
         self.rotation_pin = rotate_striker_pin
         self.rotate_max = rotate_max
         self.rotate_min = rotate_min
+
+        self.wedge_motor.rpm = 5
         
     def strike(self):
        #forward
@@ -52,12 +54,12 @@ class StrikerCommands:
         self._rotation_position = 1 - self._rotation_position
 
     def turn_wedge(self, degrees):
-        self.wedge_motor.rpm = 5
+        
         m = self.wedge_motor
         print "Pause in seconds: " + `m._T`
         #m.mode = 2
         self._wedge_position = self._wedge_position + degrees
-        m.move_to(degrees)
+        m.move_to(self._wedge_position)
         
     def turn_wedge_zero(self):
         self.wedge_motor.move_to(0)

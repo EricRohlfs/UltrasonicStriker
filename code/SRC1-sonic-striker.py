@@ -82,7 +82,8 @@ ball_echo_pin = 38 #gpio20
 
 # Stepper motor to turn the Ultrasonic Sensor
 #  This may go away and instead we will just turn the whole robot.
-sonic_in1 = 7 #gipo4
+#sonic_in1 = 7 #gipo4 Normal Robot
+sonic_in1 = 22 #gipo25  James Robot since 4 is broken on his pi
 sonic_in2 = 11 #gpio17
 sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27

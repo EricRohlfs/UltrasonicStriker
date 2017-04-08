@@ -52,7 +52,7 @@ class DistanceSensor:
         m = self.motor
         #print "Pause in seconds: " + `m._T`
         self._motor_position = self._motor_position + degrees
-        m.move_to(degrees)
+        m.move_to(self._motor_position)
         
     def turn_to_zero(self):
         self.motor.move_to(0)
