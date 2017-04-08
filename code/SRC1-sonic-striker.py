@@ -88,7 +88,10 @@ sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
 # ULTRASONIC STEPPER
-sonic_motor = Motor([sonic_in1,sonic_in2,sonic_in3,sonic_in4])
+sonic_motor = Motor([sonic_in1,
+                     sonic_in2,
+                     sonic_in3,
+                     sonic_in4])
 
 #construct a ball sensor to find the ball using a Distance Sensor
 ball_sensor = DistanceSensor(gpio, ball_echo_pin, ball_trigger_pin, sonic_motor)
@@ -177,15 +180,17 @@ class MyFrame(tk.Frame):
               ds = "%f cm " % ball_sensor.distance()
               text.insert('end',"Distance: " + ds)
             elif event.char == "2":
-              self.sonic_last = self.sonic_last - 10
-              turn_sonic(self.sonic_last)
-              text.insert('end'," " + str(self.sonic_last) + " ")
+              # self.sonic_last = self.sonic_last - 10
+              # turn_sonic(self.sonic_last)
+              ball_sensor.turn(-10)
+              #text.insert('end'," " + str(self.sonic_last) + " ")
             elif event.char == "3":
-              self.sonic_last = self.sonic_last + 10
-              turn_sonic(self.sonic_last)
-              text.insert('end'," " + str(self.sonic_last) + " ")    
+              # self.sonic_last = self.sonic_last + 10
+              # turn_sonic(self.sonic_last)
+              ball_sensor.turn(10)
+              #text.insert('end'," " + str(self.sonic_last) + " ")    
             elif event.char in ["5"]:
-              striker.hide_striker(self.striker_updown)
+              striker.hide_striker()
               text.insert('end',"striker up down ")
             elif event.char == "6":
               #change the number for bigger or smaller turns  
@@ -210,9 +215,6 @@ class MyFrame(tk.Frame):
         #print 'key release %s' % event.char
         self.afterId = None
 
-    @property
-    def sonic_last(self):
-        return self._sonic_last
 
 
 # Program

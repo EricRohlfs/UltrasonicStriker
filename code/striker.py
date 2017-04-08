@@ -14,6 +14,7 @@ class StrikerCommands:
                  rotate_striker_pin,
                  rotate_min = 230,
                  rotate_max = 475):
+
         gpio.setup(strike_pin, gpio.OUT)
         #gpio.setup(reverse.pin, gpio.OUT)
 
@@ -28,10 +29,10 @@ class StrikerCommands:
         
     def strike(self):
        #forward
-       print("strike")
-       self.gpio.output(self.striker_pin, gpio.HIGH)
+       #print("strike")
+       self.gpio.output(self.strike_pin, self.gpio.HIGH)
        time.sleep(.04) # you may need to tweak this number if striker does not bounce back up
-       self.gpio.output(self.striker_pin, self.gpio.LOW)
+       self.gpio.output(self.strike_pin, self.gpio.LOW)
 
        # if you need to manually retract the striker,
        #   uncomment the code below
@@ -44,9 +45,9 @@ class StrikerCommands:
 
     def hide_striker(self):
         if self._rotation_position == 1:
-          pwm.setPWM(self.rotation_pin, 0, self.rotate_max)
+          self.pwm.setPWM(self.rotation_pin, 0, self.rotate_max)
         elif self._rotation_position == 0:
-          pwm.setPWM(self.rotation_pin,0,self.rotate_min)
+          self.pwm.setPWM(self.rotation_pin,0,self.rotate_min)
         #trick to switch between 0 or a 1 
         self._rotation_position = 1 - self._rotation_position
 
@@ -55,7 +56,7 @@ class StrikerCommands:
         m = self.wedge_motor
         print "Pause in seconds: " + `m._T`
         #m.mode = 2
-        self.wedge_position = self.wedge_position + degrees
+        self._wedge_position = self._wedge_position + degrees
         m.move_to(degrees)
         
     def turn_wedge_zero(self):
@@ -63,4 +64,4 @@ class StrikerCommands:
 
     #useful if your bot shuts down and you have to re-align the wedge and set to zero
     def zero_out_wedge_position(self):
-        self.wedge_position = 0
+        self._wedge_position = 0
