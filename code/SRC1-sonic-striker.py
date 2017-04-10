@@ -145,14 +145,14 @@ class MyFrame(tk.Frame):
         root.bind('<KeyRelease>', self.key_release)
 
 
-    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,1,2,3,4,5
+    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,1,2,3,4,5,6,7,8,9,0,r
     def key_press(self, event):
         if self.afterId != None:
             self.after_cancel( self.afterId )
             self.afterId = None
         else:
-            #print 'key pressed %s' % event.char
-
+            #print 'key pressed %s' % event.char    
+        
             #Shutdown robot safetly when the escape key is pressed.    
             if event.char == "K" or event.keysym == 'Escape':
               text.insert('end', ' Quit ')  
@@ -162,6 +162,9 @@ class MyFrame(tk.Frame):
               striker.turn_wedge_zero() #home or center
               root.destroy()
 
+            #Reverse Left Or Right Keys for the wheels
+            elif event.char == "r":
+              wheels.reverse_forward_back = true       
             #Wheels
             elif event.char == "w" or event.keysym == 'Up':
               text.insert('end', ' FORWARD ')
