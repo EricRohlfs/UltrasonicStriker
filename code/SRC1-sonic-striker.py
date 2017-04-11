@@ -27,7 +27,7 @@ except Exception:
 
 # Initialise the PWM device using the default address
 try:
-        pwm = PWM(0x41)
+        pwm = PWM(0x40)
 except:
         pwm = PWM(0x40)
 # Note if you'd like more debug output you can instead run:
@@ -125,8 +125,8 @@ striker = StrikerCommands(gpio,
 grabber = Grabber(pwm,
                   grip_left_pin,
                   grip_right_pin,
-                  servo_min = 200,
-                  servo_max=300)
+                  servo_min = 400,
+                  servo_max=450)
 
         
 # Keyboard stuff

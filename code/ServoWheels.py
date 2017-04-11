@@ -27,8 +27,8 @@ class ServoWheels:
           self.basics = ServoBasics(self._pwm)
           self._left_wheel = left_wheel
           self._right_wheel = right_wheel
-          self._reverse_left_right = false
-          self._reverse_forward_back = false  
+          self._reverse_left_right = False
+          self._reverse_forward_back = False  
     
     #for the turn left and turn right functions, edit the sleep values for back up and turn to get the servo timing correct
     def turn_left(self):

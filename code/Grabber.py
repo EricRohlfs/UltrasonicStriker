@@ -32,16 +32,16 @@ class Grabber:
         How long to wait before making the next micro movement.
     
     """
-    last_position = 0
+    
     # user servo_min and servo_max to adjust how far the grabber opens or closes    
     def __init__(self,
                  pwm,
                  servo1_pin,
                  servo2_pin,
-                 servo_min=200,
-                 servo_max=300,
-                 step_size=15,
-                 sleep_duration=0.2
+                 servo_min=400,
+                 servo_max=450,
+                 step_size=5,
+                 sleep_duration=0.05
                 ):
 
           self.pwm = pwm
@@ -51,6 +51,7 @@ class Grabber:
           self.min = servo_min
           self.step_size = step_size
           self.sleep_duration = sleep_duration
+          self.last_position = 0
 
     # Either grabs or releases
     def grab_release(self):
@@ -59,7 +60,7 @@ class Grabber:
         
           self.last_position = 1 - self.last_position
           #switch the starting values  
-          if last_pos == 1:
+          if self.last_position == 1:
                 pin1_pos =  self.max
                 pin2_pos =  self.min
 
@@ -74,4 +75,4 @@ class Grabber:
                     self.pwm.setPWM(self.servo2_pin ,0 ,pin2_pos)
                     pin1_pos = pin1_pos + self.step_size
                     pin2_pos = pin2_pos - self.step_size
-          sleep(self.sleep_duration)
+                sleep(self.sleep_duration)
