@@ -164,7 +164,7 @@ class MyFrame(tk.Frame):
 
             #Reverse Left Or Right Keys for the wheels
             elif event.char == "r":
-              wheels.reverse_forward_back = true       
+              wheels.reverse_forward_back = True       
             #Wheels
             elif event.char == "w" or event.keysym == 'Up':
               text.insert('end', ' FORWARD ')
