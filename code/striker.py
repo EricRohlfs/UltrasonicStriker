@@ -1,7 +1,88 @@
 import time
-from sonic_striker_steppers import Motor
+from StepperMotors import Motor
+import RPi.GPIO 
+from Adafruit_PWM_Servo_Driver import PWM
 
 class StrikerCommands:
+    """
+    Attachment for a small robot to strike a foosball or ping pong ball.
+
+    The universal car door unlock actuator is the central piece of hardware
+    in this solution.  The full implementation strikes the ball vertically. 
+    One way to visualize is to imagine a person hammering a nail into 
+    a piece of wood.  Now replace the nail with a foosball and replace 
+    the hammer head with something shaped like a wedge of cheese.
+
+    The full implementation also must move the wedge out of the way
+    so the ultrasonic distance sensor can look for the ball and not 
+    have the striker head get in the way.
+
+    :param RPi.GPIO gpio:
+        So we can access the general input and output ports 
+        on the raspberry pi to make stuff move or to get input 
+        from sensors.
+
+    :param int strike_pin:
+        GPIO pin number used make the striker strike (like a hammer.)
+        This is connected to the motor driver board (L298N) that
+        drives the Universal Car Door Unlock Actuator
+
+    :param int reverse_pin:
+        GPIO pin number used to make the striker go back to the original positon.
+        (This may not be required )
+        This is connected to the motor driver board (L298N) that
+        drives the Universal Car Door Unlock Actuator
+
+    :param PWM pwm:
+        Used to access the HAT board to make some servos move.
+        
+        If the striker is hard mounted, and no servo is used, this setting 
+        can be ignored.
+
+    :param MOTOR wedge_motor: 
+        Used to make the wedge motor go left or right.  By changing the direction
+        of the wedge we can control where the ball roles when we strike it.
+
+        If the striker is striking mounted horizontally and is strikes the ball
+        like a pool stick hitting a cue ball (in the game of pool), then this 
+        setting can be ignored, having a rotating head does not do much in this 
+        setup.
+
+        wedge_motor = Motor([striker_stepper_IN1,
+                     striker_stepper_IN2,
+                     striker_stepper_IN3,
+                     striker_stepper_IN4])
+        
+
+    :param int rotate_striker_pin:
+        The hat board number of the servo used to rotate the striker out of the
+        way of the ultrasonic distance finder.  (Not really a pin, but the name 
+        is easy.)
+
+        If the striker is hard mounted, and no servo is used, this setting 
+        can be ignored.
+
+    :param int rotate_min:
+        We need to move the striker out of the way of the ultrasonic distance 
+        sensor and put it back when we are ready to strike.
+        The rotate_min and rotate_max settings allow for the user to make
+        approprate adjustments.  Generally speaking, the striker should be perpendicular
+        to the floor when ready to strike.
+        If the striker is hard mounted, and no servo is used, this setting 
+        can be ignored.
+
+    :param int rotate_max:
+        We need to move the striker out of the way of the ultrasonic distance 
+        sensor and put it back when we are ready to strike.
+        The rotate_min and rotate_max settings allow for the user to make
+        approprate adjustments.  Generally speaking, the striker should be perpendicular
+        to the floor when ready to strike.
+        If the striker is hard mounted, and no servo is used, this setting 
+        can be ignored.
+
+    """
+
+
     _rotation_position = 0
     _wedge_position = 0
     
