@@ -134,7 +134,6 @@ grabber = Grabber(pwm,
 import Tkinter as tk
 
 class MyFrame(tk.Frame):
-    _sonic_last = 0 # could break wires if we do a full turn
 
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -194,7 +193,7 @@ class MyFrame(tk.Frame):
               ball_sensor.turn(10)
               #text.insert('end'," " + str(self.sonic_last) + " ")    
             elif event.char in ["5"]:
-              striker.hide_striker()
+              striker.show_hide_striker()
               text.insert('end',"striker up down ")
             elif event.char == "6":
               #change the number for bigger or smaller turns  
@@ -214,9 +213,10 @@ class MyFrame(tk.Frame):
         self.afterId = self.after_idle( self.process_release, event )
 
     def process_release(self, event):
-        servo.servo_stop(left_wheel_pin)
-        servo.servo_stop(right_wheel_pin)
+        #servo.servo_stop(left_wheel_pin)
+        #servo.servo_stop(right_wheel_pin)
         #print 'key release %s' % event.char
+        wheels.stop()
         self.afterId = None
 
 

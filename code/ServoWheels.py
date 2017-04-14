@@ -1,4 +1,4 @@
-from Adafruit_PWM_Servo_Driver import PWM
+#from Adafruit_PWM_Servo_Driver import PWM
 
 class ServoBasics:
     
@@ -58,18 +58,33 @@ class ServoWheels:
           else:  
                self.basics.servo_counter_clockwise(self._left_wheel)
                self.basics.servo_clockwise(self._right_wheel)
+
+    def stop(self):
+          self.basics.servo_stop(self._left_wheel)
+          self.basics.servo_stop(self._right_wheel) 
         
     @property
     def reverse_left_right(self):
-        return self._reverse_left_right
+          """
+          When ``True`` reverses the turn left or right commands.
+          Useful when robot servos are mounted differently.
+          """
+          
+          return self._reverse_left_right
+
     @reverse_left_right.setter
     def reverse_left_right(self,value):
-        self._reverse_left_right = value
+          self._reverse_left_right = value
     
     @property
     def reverse_forward_back(self):
-        return self._reverse_forward_back
+          """
+          When ``true`` reverses the forward or backwards commands.
+          Useful when robot servos are mounted differently.
+          """
+          return self._reverse_forward_back
+    
     @reverse_forward_back.setter
     def reverse_forward_back(self,value):
-        self._reverse_forward_back = value
+          self._reverse_forward_back = value
           

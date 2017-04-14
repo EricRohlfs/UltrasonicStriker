@@ -8,12 +8,14 @@ class StrikerCommands:
     Attachment for a small robot to strike a foosball or ping pong ball.
 
     The universal car door unlock actuator is the central piece of hardware
-    in this solution.  The full implementation strikes the ball vertically. 
-    One way to visualize is to imagine a person hammering a nail into 
+    in this solution.  The full implementation strikes the ball vertically
+    to make it move.
+
+    One way to visualize this is to imagine a person hammering a nail into 
     a piece of wood.  Now replace the nail with a foosball and replace 
     the hammer head with something shaped like a wedge of cheese.
 
-    The full implementation also must move the wedge out of the way
+    The full implementation must move the wedge out of the way
     so the ultrasonic distance sensor can look for the ball and not 
     have the striker head get in the way.
 
@@ -36,7 +38,7 @@ class StrikerCommands:
     :param PWM pwm:
         Used to access the HAT board to make some servos move.
         
-        If the striker is hard mounted, and no servo is used, this setting 
+        If the striker is not mounted to a servo, this setting 
         can be ignored.
 
     :param MOTOR wedge_motor: 
@@ -48,18 +50,25 @@ class StrikerCommands:
         setting can be ignored, having a rotating head does not do much in this 
         setup.
 
-        wedge_motor = Motor([striker_stepper_IN1,
-                     striker_stepper_IN2,
-                     striker_stepper_IN3,
-                     striker_stepper_IN4])
-        
+        Example::
+
+            striker_stepper_IN1 = 32 #gpio12
+            striker_stepper_IN2 = 33 #gpio13
+            striker_stepper_IN3 = 36 #gpio16
+            striker_stepper_IN4 = 35 #gpio19
+
+            wedge_motor = Motor([striker_stepper_IN1,
+                        striker_stepper_IN2,
+                        striker_stepper_IN3,
+                        striker_stepper_IN4])
+            
 
     :param int rotate_striker_pin:
         The hat board number of the servo used to rotate the striker out of the
         way of the ultrasonic distance finder.  (Not really a pin, but the name 
         is easy.)
 
-        If the striker is hard mounted, and no servo is used, this setting 
+        If the striker is not mounted to a servo, this setting 
         can be ignored.
 
     :param int rotate_min:
@@ -68,7 +77,8 @@ class StrikerCommands:
         The rotate_min and rotate_max settings allow for the user to make
         approprate adjustments.  Generally speaking, the striker should be perpendicular
         to the floor when ready to strike.
-        If the striker is hard mounted, and no servo is used, this setting 
+
+        If the striker is not mounted to a servo, this setting 
         can be ignored.
 
     :param int rotate_max:
@@ -77,11 +87,11 @@ class StrikerCommands:
         The rotate_min and rotate_max settings allow for the user to make
         approprate adjustments.  Generally speaking, the striker should be perpendicular
         to the floor when ready to strike.
-        If the striker is hard mounted, and no servo is used, this setting 
+       
+       If the striker is not mounted to a servo, this setting 
         can be ignored.
 
     """
-
 
     _rotation_position = 0
     _wedge_position = 0
@@ -126,7 +136,16 @@ class StrikerCommands:
        #time.sleep(.03)
        #gpio.output(striker_gpio2, gpio.LOW)
 
-    def hide_striker(self):
+
+    def show_hide_striker(self):
+
+        """
+        When called either moves the the striker out of the way 
+        of the Ultrasonic Distance Sensor or puts it back so 
+        the ball can be hit. The hardware is a standard servo
+        plugged into the servo hat.
+        """
+        
         if self._rotation_position == 1:
           self.pwm.setPWM(self.rotation_pin, 0, self.rotate_max)
         elif self._rotation_position == 0:
@@ -135,16 +154,43 @@ class StrikerCommands:
         self._rotation_position = 1 - self._rotation_position
 
     def turn_wedge(self, degrees):
-        
+        """
+        Rotates the wedge that makes contact with the foosball
+        and allows us to control where the ball goes.
+
+        :param int degrees:
+            Negative numbers move one direction and positive
+            numbers move the other direction, relative to 
+            the current position.
+
+        """
+
         m = self.wedge_motor
-        print "Pause in seconds: " + `m._T`
-        #m.mode = 2
+        #print "Pause in seconds: " + `m._T`
         self._wedge_position = self._wedge_position + degrees
         m.move_to(self._wedge_position)
         
     def turn_wedge_zero(self):
+        """
+        Will rotate the wedge to the zero position.
+        Should be used when shutting down the robot or 
+        when closing the program.
+
+        Future plans involve other sensors that can help make
+        the robot smarter and the robot can determine the direction
+        to strike the ball.  In these scenarios the position of
+        wedge is important.
+        """
+
+
         self.wedge_motor.move_to(0)
 
     #useful if your bot shuts down and you have to re-align the wedge and set to zero
     def zero_out_wedge_position(self):
+        """
+        If the wedge is not in the proper position,
+        the user can align it and then set that position
+        to zero. Helpful if the robot is not cleanly shutdown.
+        """
+
         self._wedge_position = 0
