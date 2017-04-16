@@ -8,7 +8,7 @@
 import sys
 import threading
 from Adafruit_PWM_Servo_Driver import PWM
-from sonic_striker_steppers import Motor
+from StepperMotors import Motor
 import time
 from DistanceSensor import DistanceSensor
 from ServoWheels import ServoWheels, ServoBasics
@@ -27,13 +27,13 @@ except Exception:
 
 # Initialise the PWM device using the default address
 try:
-        pwm = PWM(0x40)
+        servo_hat = PWM(0x41)
 except:
-        pwm = PWM(0x40)
+        servo_hat = PWM(0x40)
 # Note if you'd like more debug output you can instead run:
-#pwm = PWM(0x40, debug=True)
+#servo_hat = PWM(0x40, debug=True)
 
-pwm.setPWMFreq(60) # Set frequency to 60 Hz
+servo_hat.setPWMFreq(60) # Set frequency to 60 Hz
 
 """
   pwm is the ServoHat
@@ -41,7 +41,7 @@ pwm.setPWMFreq(60) # Set frequency to 60 Hz
   This helps keep things organized
 """
 
-#pwm pin assignment
+#servo_hat pin assignment
 left_wheel_pin = 0
 right_wheel_pin = 1
 servoLift = 2
@@ -65,20 +65,17 @@ striker_reverse_pin = 16 #gpio23
 
 # four gpio pins are needed for the striker steper
 # Note: not all robots have a rotating striker head.
-striker_stepper_IN1 = 32 #gpio12
-striker_stepper_IN2 = 33 #gpio13
-striker_stepper_IN3 = 36 #gpio16
-striker_stepper_IN4 = 35 #gpio19
+striker_stepper_IN1 = 29 #or gpio5
+striker_stepper_IN2 = 31 #or gpio6
+striker_stepper_IN3 = 32 #or gpio12
+striker_stepper_IN4 = 33 # or gpio13
 
 # ULTRASONIC
 #set GPIO Pins
-ball_trigger_pin = 40 #gpio21
-ball_echo_pin = 38 #gpio20
-
-
-#wall_trigger = None
-#wall_echo = None
-#wall_sensor = DistanceSensor(gpio, wall_echo, wall_trigger)
+ball_finder_trigger_pin = 40 #or gpio21
+ball_finder_echo_pin = 38 # or gpio20
+wall_finder_trigger_pin = 36 # or gpio 16
+wall_finder_echo_pin = 35 # or gpio 19
 
 # Stepper motor to turn the Ultrasonic Sensor
 #  This may go away and instead we will just turn the whole robot.
@@ -88,21 +85,17 @@ sonic_in2 = 11 #gpio17
 sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
-# ULTRASONIC STEPPER
-sonic_motor = Motor([sonic_in1,
-                     sonic_in2,
-                     sonic_in3,
-                     sonic_in4])
-
 #construct a ball sensor to find the ball using a Distance Sensor
-ball_sensor = DistanceSensor(gpio, ball_echo_pin, ball_trigger_pin, sonic_motor)
+ball_finder = DistanceSensor(gpio, ball_finder_echo_pin, ball_finder_trigger_pin, None)
+
+wall_finder = DistanceSensor(gpio, wall_finder_echo_pin, wall_finder_trigger_pin, None)
 
 # The wheels that make the robot go forward and backward
-wheels = ServoWheels(pwm,left_wheel_pin, right_wheel_pin)
+wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin)
 
 # access to the raw servo commands
 # mainly used to stop motors on key_up
-servo = ServoBasics(pwm)
+servo = ServoBasics(servo_hat)
 
 
 """
@@ -118,14 +111,16 @@ wedge_motor = Motor([striker_stepper_IN1,
 striker = StrikerCommands(gpio,
                           striker_pin,
                           striker_reverse_pin,
-                          pwm,
+                          servo_hat,
                           wedge_motor,
-                          show_hide_striker_pin)
+                          show_hide_striker_pin,
+                          rotate_min = 150,
+                          rotate_max = 360)
 
-grabber = Grabber(pwm,
+grabber = Grabber(servo_hat,
                   grip_left_pin,
                   grip_right_pin,
-                  servo_min = 400,
+                  servo_min = 300,
                   servo_max=450)
 
         
@@ -157,9 +152,11 @@ class MyFrame(tk.Frame):
               text.insert('end', ' Quit ')  
               #put motors back to original position
               #so we don't have to spend so much time calibrating
-              ball_sensor.turn_to_zero()
+              #ball_finder.turn_to_zero()
               striker.turn_wedge_zero() #home or center
+              gpio.cleanup()  
               root.destroy()
+              
 
             #Reverse Left Or Right Keys for the wheels
             elif event.char == "r":
@@ -180,17 +177,19 @@ class MyFrame(tk.Frame):
               
             #Servo Striker
             elif event.char =="1":
-              ds = "%f cm " % ball_sensor.distance()
-              text.insert('end',"Distance: " + ds)
-            elif event.char == "2":
+              #ball_distance = "%f cm " % ball_finder.distance()
+              wall_distance = "%f cm " % wall_finder.distance()
+              #text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
+              text.insert('end'," ball wall: " + wall_distance + " "   )
+            #elif event.char == "2":
               # self.sonic_last = self.sonic_last - 10
               # turn_sonic(self.sonic_last)
-              ball_sensor.turn(-10)
+              #ball_finder.turn(-10)
               #text.insert('end'," " + str(self.sonic_last) + " ")
-            elif event.char == "3":
+            #elif event.char == "3":
               # self.sonic_last = self.sonic_last + 10
               # turn_sonic(self.sonic_last)
-              ball_sensor.turn(10)
+              #ball_finder.turn(10)
               #text.insert('end'," " + str(self.sonic_last) + " ")    
             elif event.char in ["5"]:
               striker.show_hide_striker()

@@ -12,6 +12,7 @@ class DistanceSensor:
         self._echo = echo
         self._gpio.setup(self._trigger, gpio.OUT)
         self._gpio.setup(self._echo, gpio.IN)
+        #todo: put if not None check
         self.motor = motor
 
     """    
@@ -30,10 +31,10 @@ class DistanceSensor:
         pulse_start = time.time()
         pulse_end = time.time()
         #save startTime
-        while self._gpio.input(self._echo)==0:
+        while self._gpio.input(self._echo) == 0:
            pulse_start = time.time()
         #save arrivalTime
-        while self._gpio.input(self._echo)==1:
+        while self._gpio.input(self._echo) == 1:
            pulse_end = time.time()
            #stop runaway loop
            counter = pulse_end - pulse_start
@@ -42,7 +43,7 @@ class DistanceSensor:
 
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
-        distance = round(distance,3)
+        distance = round(distance,2)
         #print(distance)
         return distance # in cm
 
