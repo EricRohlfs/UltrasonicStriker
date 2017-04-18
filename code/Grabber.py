@@ -56,6 +56,8 @@ class Grabber:
           self.step_size = step_size
           self.sleep_duration = sleep_duration
           self.last_position = 0 # rename to last_state, it is either 0 or 1 for open or closed
+          self.servo_1_last_state = 0
+          self.servo_2_last_state = 0  
           self.servo_1_min = servo_1_min,
           self.servo_1_max = servo_1_max,
           self.servo_2_min = servo_2_min,
@@ -94,3 +96,39 @@ class Grabber:
                     pin1_pos = pin1_pos + self.step_size
                     pin2_pos = pin2_pos - self.step_size
                 sleep(self.sleep_duration)
+                
+        def servo_1_open_or_close(self):
+            pin1_pos = self.servo_1_min #pin1 position
+        
+            self.self.servo_1_last_state = 1 - self.servo_1_last_state
+            #switch the starting values  
+            if self.servo_1_last_state == 1:
+                pin1_pos =  self.servo_1_max
+
+            while(self.servo_1_min <= pin1_pos <= self.servo_1_max):  
+                if self.servo_1_last_state == 1:
+                    self.pwm.setPWM(self.servo1_pin, 0, pin1_pos)
+                    pin1_pos = pin1_pos - self.step_size
+                if self.servo_1_last_state == 0:
+                    self.pwm.setPWM(self.servo1_pin, 0, pin1_pos)
+                    pin1_pos = pin1_pos + self.step_size
+                sleep(self.sleep_duration)
+        
+        def servo_2_open_or_close(self):
+            #set default
+            pin2_pos = self.servo_2_max #pin2 position
+        
+            self.servo_2_last_state = 1 - self.servo_2_last_state
+            #switch the starting values  
+            if self.servo_2_last_state == 1:
+                pin1_pos =  self.servo_1_max
+                pin2_pos =  self.servo_2_min
+
+            while(self.servo_2_min <= pin1_pos <= self.servo_2_max): 
+                self.pwm.setPWM(self.servo2_pin, 0, pin2_pos)
+                if self.servo_2_last_state == 1:
+                    pin2_pos = pin2_pos + self.step_size
+                if self.servo_2_last_state == 0:
+                    pin2_pos = pin2_pos - self.step_size
+                sleep(self.sleep_duration)
+            
