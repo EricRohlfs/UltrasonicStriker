@@ -42,6 +42,10 @@ class Grabber:
                  servo_max=450,
                  step_size=5,
                  sleep_duration=0.05
+                 servo_1_min = None,
+                 servo_1_max = None,
+                 servo_2_min = None,
+                 servo_2_max = None
                 ):
 
           self.pwm = pwm
@@ -51,18 +55,32 @@ class Grabber:
           self.min = servo_min
           self.step_size = step_size
           self.sleep_duration = sleep_duration
-          self.last_position = 0
+          self.last_position = 0 # rename to last_state, it is either 0 or 1 for open or closed
+          self.servo_1_min = servo_1_min,
+          self.servo_1_max = servo_1_max,
+          self.servo_2_min = servo_2_min,
+          self.servo_2_max = servo_2_max
+          
+          if self.servo_1_min is None:
+            self.servo_1_min = self.min
+          if self.servo_1_max is None:
+            self.servo_1_max = self.max
+          if self.servo_2_min is None:
+            self.servo_2_min = self.min
+          if self.servo_2_max is None:
+            self.servo_2_max = self.max
+        
 
     # Either grabs or releases
     def grab_release(self):
-          pin1_pos = self.min #pin1 position
-          pin2_pos = self.max #pin2 position
+          pin1_pos = self.servo_1_min #pin1 position
+          pin2_pos = self.servo_2_max #pin2 position
         
           self.last_position = 1 - self.last_position
           #switch the starting values  
           if self.last_position == 1:
-                pin1_pos =  self.max
-                pin2_pos =  self.min
+                pin1_pos =  self.servo_1_max
+                pin2_pos =  self.servo_2_min
 
           while(self.min <= pin1_pos <= self.max):  
                 if self.last_position == 1:
