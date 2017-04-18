@@ -34,6 +34,8 @@ class DistanceSensor:
         #todo: put if not None check
         self.motor = motor
         self._motor_position = 0
+        self.timeout_message = 'The Distance Sensor took too long. Is it Plugged in?'
+        self.timeout = 0.9
 
     """    
     The HC-SR04 sensor requires a short 10uS pulse
@@ -45,29 +47,37 @@ class DistanceSensor:
     """
     
     def distance(self):
+        """
+        returns the distance in centimeters
+        """
+        # declaring variables, the times are overwritten later.
+        pulse_start = time.time()
+        pulse_end = time.time()
+        
+        #start the sensor
         self._gpio.output(self._trigger, True)
         time.sleep(0.00001)
         self._gpio.output(self._trigger, False)
-        pulse_start = time.time()
-        pulse_end = time.time()
+        
         #save startTime
         while self._gpio.input(self._echo) == 0:
            pulse_start = time.time()
+
         #save arrivalTime
         while self._gpio.input(self._echo) == 1:
            pulse_end = time.time()
-           #stop runaway loop
-           counter = pulse_end - pulse_start
-           if counter > 2:
-                   return 0
+           pulse_duration = pulse_end - pulse_start
+           
+           #prevent a runaway loop
+           if pulse_duration > self.timeout :
+                   raise TimeoutError(self.timeout_message)
 
+        #calculate distance in centimeters
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
         distance = round(distance,2)
-        #print(distance)
         return distance # in cm
 
-    
     def turn(self, degrees):
         """
         Will turn distanc sensor if it is attached to a stepper motor.
