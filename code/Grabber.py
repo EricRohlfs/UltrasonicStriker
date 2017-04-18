@@ -105,12 +105,11 @@ class Grabber:
             if self.servo_1_last_state == 1:
                 pin1_pos =  self.servo_1_max
 
-            while(self.servo_1_min <= pin1_pos <= self.servo_1_max):  
+            while(self.servo_1_min <= pin1_pos <= self.servo_1_max): 
+                 self.pwm.setPWM(self.servo1_pin, 0, pin1_pos)
                 if self.servo_1_last_state == 1:
-                    self.pwm.setPWM(self.servo1_pin, 0, pin1_pos)
                     pin1_pos = pin1_pos - self.step_size
                 if self.servo_1_last_state == 0:
-                    self.pwm.setPWM(self.servo1_pin, 0, pin1_pos)
                     pin1_pos = pin1_pos + self.step_size
                 sleep(self.sleep_duration)
         
