@@ -55,7 +55,7 @@ class Grabber:
           self.min = servo_min
           self.step_size = step_size
           self.sleep_duration = sleep_duration
-          self.last_position = 0 # rename to last_state, it is either 0 or 1 for open or closed
+          self.last_position = 0 # rename to last_state, it is either 0 or 1 for open or closed when using both servos at same time.
           self.servo_1_last_state = 0
           self.servo_2_last_state = 0  
           self.servo_1_min = servo_1_min,
@@ -75,6 +75,11 @@ class Grabber:
 
     # Either grabs or releases
     def grab_release(self):
+        """
+        Either grabs or releases using both servos.
+        Using just one servo to pick up a small ball is a more efficient use of servos,
+        but when you need to move both, this is the method to use.
+        """
           pin1_pos = self.servo_1_min #pin1 position
           pin2_pos = self.servo_2_max #pin2 position
         
