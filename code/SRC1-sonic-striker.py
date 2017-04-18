@@ -72,10 +72,10 @@ striker_stepper_IN4 = 33 # or gpio13
 
 # ULTRASONIC
 #set GPIO Pins
-ball_finder_trigger_pin = 40 #or gpio21
-ball_finder_echo_pin = 38 # or gpio20
-wall_finder_trigger_pin = 36 # or gpio 16
-wall_finder_echo_pin = 35 # or gpio 19
+ball_sensor_trigger_pin = 40 #or gpio21
+ball_sensor_echo_pin = 38 # or gpio20
+wall_sensor_trigger_pin = 36 # or gpio 16
+wall_sensor_echo_pin = 35 # or gpio 19
 
 # Stepper motor to turn the Ultrasonic Sensor
 #  This may go away and instead we will just turn the whole robot.
@@ -86,9 +86,9 @@ sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
 #construct a ball sensor to find the ball using a Distance Sensor
-ball_finder = DistanceSensor(gpio, ball_finder_echo_pin, ball_finder_trigger_pin, None)
+ball_sensor = DistanceSensor(gpio, ball_sensor_echo_pin, ball_sensor_trigger_pin, None)
 
-wall_finder = DistanceSensor(gpio, wall_finder_echo_pin, wall_finder_trigger_pin, None)
+wall_sensor = DistanceSensor(gpio, wall_sensor_echo_pin, wall_sensor_trigger_pin, None)
 
 # The wheels that make the robot go forward and backward
 wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin)
@@ -152,7 +152,7 @@ class MyFrame(tk.Frame):
               text.insert('end', ' Quit ')  
               #put motors back to original position
               #so we don't have to spend so much time calibrating
-              #ball_finder.turn_to_zero()
+              #ball_sensor.turn_to_zero()
               striker.turn_wedge_zero() #home or center
               gpio.cleanup()  
               root.destroy()
@@ -160,7 +160,7 @@ class MyFrame(tk.Frame):
 
             #Reverse Left Or Right Keys for the wheels
             elif event.char == "r":
-              wheels.reverse_forward_back = True       
+              wheels.switch_foward_backward_commands = True       
             #Wheels
             elif event.char == "w" or event.keysym == 'Up':
               text.insert('end', ' FORWARD ')
@@ -177,19 +177,19 @@ class MyFrame(tk.Frame):
               
             #Servo Striker
             elif event.char =="1":
-              #ball_distance = "%f cm " % ball_finder.distance()
-              wall_distance = "%f cm " % wall_finder.distance()
+              #ball_distance = "%f cm " % ball_sensor.distance()
+              wall_distance = "%f cm " % wall_sensor.distance()
               #text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
               text.insert('end'," ball wall: " + wall_distance + " "   )
             #elif event.char == "2":
               # self.sonic_last = self.sonic_last - 10
               # turn_sonic(self.sonic_last)
-              #ball_finder.turn(-10)
+              #ball_sensor.turn(-10)
               #text.insert('end'," " + str(self.sonic_last) + " ")
             #elif event.char == "3":
               # self.sonic_last = self.sonic_last + 10
               # turn_sonic(self.sonic_last)
-              #ball_finder.turn(10)
+              #ball_sensor.turn(10)
               #text.insert('end'," " + str(self.sonic_last) + " ")    
             elif event.char in ["5"]:
               striker.show_hide_striker()

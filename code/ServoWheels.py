@@ -27,34 +27,38 @@ class ServoWheels:
           self.basics = ServoBasics(self._pwm)
           self._left_wheel = left_wheel
           self._right_wheel = right_wheel
-          self._reverse_left_right = False
-          self._reverse_forward_back = False  
+          self._switch_left_right_commands = False
+          self._switch_foward_backward_commands = False  
     
     #for the turn left and turn right functions, edit the sleep values for back up and turn to get the servo timing correct
     def turn_left(self):
-          if(self._reverse_left_right):
-               self.turn_right()
+          if(self._switch_left_right_commands):
+               self.basics.servo_counter_clockwise(self._left_wheel)
+               self.basics.servo_counter_clockwise(self._right_wheel)
           else:
                self.basics.servo_clockwise(self._left_wheel)
                self.basics.servo_clockwise(self._right_wheel)
 
     def turn_right(self):
-          if(self._reverse_left_right):
-               self.turn_left()
+          if(self._switch_left_right_commands):
+               self.basics.servo_clockwise(self._left_wheel)
+               self.basics.servo_clockwise(self._right_wheel)
           else:
                self.basics.servo_counter_clockwise(self._left_wheel)
                self.basics.servo_counter_clockwise(self._right_wheel)
             
     def foward(self):
-          if(self._reverse_forward_back):
-               self.backward()
+          if(self._switch_foward_backward_commands):
+               self.basics.servo_counter_clockwise(self._left_wheel)
+               self.basics.servo_clockwise(self._right_wheel)
           else:  
                self.basics.servo_clockwise(self._left_wheel)
                self.basics.servo_counter_clockwise(self._right_wheel)
            
     def backward(self):
-          if(self._reverse_forward_back):
-               self.foward()
+          if(self._switch_foward_backward_commands):
+               self.basics.servo_clockwise(self._left_wheel)
+               self.basics.servo_counter_clockwise(self._right_wheel)
           else:  
                self.basics.servo_counter_clockwise(self._left_wheel)
                self.basics.servo_clockwise(self._right_wheel)
@@ -64,27 +68,23 @@ class ServoWheels:
           self.basics.servo_stop(self._right_wheel) 
         
     @property
-    def reverse_left_right(self):
+    def switch_left_right_commands(self):
           """
           When ``True`` reverses the turn left or right commands.
           Useful when robot servos are mounted differently.
           """
           
-          return self._reverse_left_right
+          return self._switch_left_right_commands
 
-    @reverse_left_right.setter
-    def reverse_left_right(self,value):
-          self._reverse_left_right = value
+    @switch_left_right_commands.setter
+    def switch_left_right_commands(self,value):
+          self._switch_left_right_commands = value
     
     @property
-    def reverse_forward_back(self):
-          """
-          When ``true`` reverses the forward or backwards commands.
-          Useful when robot servos are mounted differently.
-          """
-          return self._reverse_forward_back
-    
-    @reverse_forward_back.setter
-    def reverse_forward_back(self,value):
-          self._reverse_forward_back = value
+    def switch_foward_backward_commands(self):
+          return self._switch_foward_backward_commands
+
+    @switch_foward_backward_commands.setter
+    def switch_foward_backward_commands(self, value):
+          self._switch_foward_backward_commands = value
           

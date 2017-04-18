@@ -2,10 +2,29 @@ import time
 
 class DistanceSensor:
 
-    _motor_position = 0
-    
+    """
+    Distance sensor code and supports an attached stepper motor to turn the 
+    distanc sensor.
+
+    :param RPi.GPIO gpio:
+        General Purpose In and Out library for raspberry pi.
+
+    :param int echo:
+        Echo pin number
+
+    :param int trigger:
+        trigger pin number
+
+    :param Motor motor:
+        Stepper motor.
+
+        The current implementation is not using this functionality, and the ultrasonic sensors 
+        are mounted directly to the robot and the whole robot turns.
+        
+    """
+
     #motor is to turn 
-    def __init__(self, gpio, echo, trigger, motor):
+    def __init__(self, gpio, echo, trigger, motor = None):
         self.speed_of_sound = 343.26 # m/s
         self._gpio = gpio
         self._trigger = trigger
@@ -14,6 +33,7 @@ class DistanceSensor:
         self._gpio.setup(self._echo, gpio.IN)
         #todo: put if not None check
         self.motor = motor
+        self._motor_position = 0
 
     """    
     The HC-SR04 sensor requires a short 10uS pulse
@@ -49,6 +69,9 @@ class DistanceSensor:
 
     
     def turn(self, degrees):
+        """
+        Will turn distanc sensor if it is attached to a stepper motor.
+        """
         self.motor.rpm = 5
         m = self.motor
         #print "Pause in seconds: " + `m._T`
@@ -56,9 +79,13 @@ class DistanceSensor:
         m.move_to(self._motor_position)
         
     def turn_to_zero(self):
+        """
+        Will move the sensor to zero if attached to a stepper motor.
+        """
         self.motor.move_to(0)
 
-    #useful if your bot shuts down and you have to re-align the wedge and set to zero
     def zero_out_wedge_position(self):
+        """
+        Useful if your bot shuts down and you have to re-align the wedge and set to zero
+        """
         self._motor_position = 0
-    
