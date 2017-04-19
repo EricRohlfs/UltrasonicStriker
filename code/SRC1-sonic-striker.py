@@ -14,11 +14,12 @@ from DistanceSensor import DistanceSensor
 from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
 from Grabber import Grabber
+from Brains import Brains
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
 except Exception:
-        print "error importing the gpio library which is probably because you need to run this program with sudo"
+        print("error importing the gpio library which is probably because you need to run this program with sudo")
 
 
 # ===========================================================================
@@ -93,11 +94,6 @@ wall_sensor = DistanceSensor(gpio, wall_sensor_echo_pin, wall_sensor_trigger_pin
 # The wheels that make the robot go forward and backward
 wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin)
 
-# access to the raw servo commands
-# mainly used to stop motors on key_up
-servo = ServoBasics(servo_hat)
-
-
 """
 Using an universal power door actuator and an L298N H-Bridge
 the code will move the actuator forward, wait, then retract
@@ -123,9 +119,9 @@ grabber = Grabber(servo_hat,
                   servo_min = 300,
                   servo_max=450)
 
-        
-# Keyboard stuff
+brains = Brains(ball_sensor, wall_sensor, wheels, striker)
 
+# Keyboard stuff
 import Tkinter as tk
 
 class MyFrame(tk.Frame):
@@ -138,8 +134,7 @@ class MyFrame(tk.Frame):
         root.bind('<KeyPress>', self.key_press)
         root.bind('<KeyRelease>', self.key_release)
 
-
-    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,1,2,3,4,5,6,7,8,9,0,r
+    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,1,2,3,4,5,6,7,8,9,0,r,p
     def key_press(self, event):
         if self.afterId != None:
             self.after_cancel( self.afterId )
@@ -175,22 +170,19 @@ class MyFrame(tk.Frame):
               text.insert('end', ' LEFT_TURN ')
               wheels.turn_left() 
               
-            #Servo Striker
+            #Brains
             elif event.char =="1":
-              #ball_distance = "%f cm " % ball_sensor.distance()
+              brains.find_ball_left_and_drive_to_ball()
+              text.insert('end',"find ball left")
+            elif event.char == "2":
+              brains.find_ball_right_and_drive_to_ball()
+              text.insert('end',"find ball right")
+            elif event.char == "p":
+              # mainly for testing when the robot boots up
+              ball_distance = "%f cm " % ball_sensor.distance()
               wall_distance = "%f cm " % wall_sensor.distance()
-              #text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
-              text.insert('end'," ball wall: " + wall_distance + " "   )
-            #elif event.char == "2":
-              # self.sonic_last = self.sonic_last - 10
-              # turn_sonic(self.sonic_last)
-              #ball_sensor.turn(-10)
-              #text.insert('end'," " + str(self.sonic_last) + " ")
-            #elif event.char == "3":
-              # self.sonic_last = self.sonic_last + 10
-              # turn_sonic(self.sonic_last)
-              #ball_sensor.turn(10)
-              #text.insert('end'," " + str(self.sonic_last) + " ")    
+              text.insert('end'," ball wall: " + ball_distance + " " + ball_distance )
+              text.insert('end'," ball wall: " + wall_distance + " " + wall_distance  )
             elif event.char in ["5"]:
               striker.show_hide_striker()
               text.insert('end',"striker up down ")
@@ -212,12 +204,9 @@ class MyFrame(tk.Frame):
         self.afterId = self.after_idle( self.process_release, event )
 
     def process_release(self, event):
-        #servo.servo_stop(left_wheel_pin)
-        #servo.servo_stop(right_wheel_pin)
         #print 'key release %s' % event.char
         wheels.stop()
         self.afterId = None
-
 
 
 # Program

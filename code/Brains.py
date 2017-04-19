@@ -22,8 +22,6 @@ class Brains:
 
         Technically this just sets the time to sleep between the 
         turning and stoping the turn.
-
-
     """
 
     def __init__(self, 
@@ -41,24 +39,21 @@ class Brains:
         self.strike_zone_center = strike_zone_center
         self.strike_zone_tolerance = strike_zone_tolerance
         self.ball_finding_turn_size = 0.01
-        
         self._keep_finding_the_ball = True
 
-    def find_ball_and_drive_left(self):
+    def find_ball_left_and_drive_to_ball(self):
         """
         Looks for the ball by turning left and then drives to
         the ball and stops.
         """
-
         self.find_ball_left()
         self.drive_to_strike_zone()
 
-    def find_ball_and_drive_right(self):
+    def find_ball_right_and_drive_to_ball(self):
         """
         Looks for the ball by turning right and then drives to
         the ball and stops.
         """
-
         self.find_ball_right()
         self.drive_to_strike_zone()
 
@@ -66,6 +61,8 @@ class Brains:
         """
         Looks for the ball by turning the robot left.
         """
+        if self.striker is not None:
+            self.striker.hide_striker()
         self._keep_finding_the_ball = True
         while self.keep_finding_the_ball and self.is_wall() :
             self.wheels.turn_left()
@@ -76,7 +73,8 @@ class Brains:
         """
         Looks for the ball by turning the robot right.
         """
-
+        if self.striker is not None:
+            self.striker.hide_striker()
         self._keep_finding_the_ball = True
         while self.keep_finding_the_ball and self.is_wall() :
             self.wheels.turn_right()
@@ -129,7 +127,8 @@ class Brains:
         #if we don't have a ball nothing to do here.
         if self.is_wall():
             return
-
+        if self.striker is not None:
+            self.striker.hide_striker()
         ball_distance = self.ball_sensor.distance() 
 
         if self.is_ball_in_strike_zone(ball_distance):
@@ -158,11 +157,10 @@ class Brains:
        wheel_diameter = 6.985 #cm or the vex wheels we are using are 2.75 inch wheels 6.985 is the cm conversion
        circumference = wheel_diameter * 3.14
        revolutions_needed = distance_to_go / circumference 
-       time_for_one_rotation = 60/50 # in seconds
+       time_for_one_rotation = 60/rpm # in seconds
        result = round(revolutions_needed * time_for_one_rotation, 4)
        #todo: might need to shave little bit to account for processing time.
        return result
-
 
     @property
     def keep_finding_the_ball(self):

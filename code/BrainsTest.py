@@ -5,7 +5,6 @@ from unittest.mock import Mock as mock, patch, PropertyMock
 from ServoWheels import ServoWheels, ServoBasics
 from Brains import Brains
 
-
 class BrainsTest(unittest.TestCase):
 
     def test_is_wall_is_true_when_both_sensors_report_close_to_same_distance(self):
@@ -153,6 +152,63 @@ class BrainsTest(unittest.TestCase):
         
         #cleanup
         wheels.dispose()
+
+    def test_find_ball_left_command_hides_the_striker(self):
+        ball_sensor = mock(name='ball_sensor')
+        ball_sensor.distance.return_value = 10.5
+        wall_sensor = mock(name='wall_sensor')
+        wall_sensor.distance.return_value = 60
+        wheels = mock(name='wheels')
+        wheels.turn_left.assert_not_called() # double check no side effects
+        striker = mock(name="striker")
+
+        brain = Brains(ball_sensor, wall_sensor, wheels, striker)
+        #_keep_finding_the_ball is normally true, setting to false is best way to test
+        brain._keep_finding_the_ball = False 
+        brain.find_ball_left()
+        
+        striker.hide_striker.assert_any_call()
+        #cleanup
+        wheels.dispose()
+        striker.dispose()
+
+    def test_find_ball_right_command_hides_the_striker(self):
+        ball_sensor = mock(name='ball_sensor')
+        ball_sensor.distance.return_value = 10.5
+        wall_sensor = mock(name='wall_sensor')
+        wall_sensor.distance.return_value = 60
+        wheels = mock(name='wheels')
+        wheels.turn_left.assert_not_called() # double check no side effects
+        striker = mock(name="striker")
+
+        brain = Brains(ball_sensor, wall_sensor, wheels, striker)
+        #_keep_finding_the_ball is normally true, setting to false is best way to test
+        brain._keep_finding_the_ball = False 
+        brain.find_ball_right()
+        
+        striker.hide_striker.assert_any_call()
+        #cleanup
+        wheels.dispose()
+        striker.dispose()
+
+    def test_drive_to_strike_zone_hides_the_striker(self):
+        ball_sensor = mock(name='ball_sensor')
+        ball_sensor.distance.return_value = 10.5
+        wall_sensor = mock(name='wall_sensor')
+        wall_sensor.distance.return_value = 60
+        wheels = mock(name='wheels')
+        wheels.turn_left.assert_not_called() # double check no side effects
+        striker = mock(name="striker")
+
+        brain = Brains(ball_sensor, wall_sensor, wheels, striker)
+        brain.drive_to_strike_zone()
+        
+        striker.hide_striker.assert_any_call()
+        #cleanup
+        wheels.dispose()
+        striker.dispose()
+        ball_sensor.dispose()
+        wall_sensor.dispose()
     
 
 if __name__ == '__main__':

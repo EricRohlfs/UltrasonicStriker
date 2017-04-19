@@ -1,7 +1,7 @@
 import time
-from StepperMotors import Motor
-import RPi.GPIO 
-from Adafruit_PWM_Servo_Driver import PWM
+#from StepperMotors import Motor
+#import RPi.GPIO 
+#from Adafruit_PWM_Servo_Driver import PWM
 
 class StrikerCommands:
     """
@@ -62,7 +62,6 @@ class StrikerCommands:
                         striker_stepper_IN3,
                         striker_stepper_IN4])
             
-
     :param int rotate_striker_pin:
         The hat board number of the servo used to rotate the striker out of the
         way of the ultrasonic distance finder.  (Not really a pin, but the name 
@@ -91,20 +90,22 @@ class StrikerCommands:
        If the striker is not mounted to a servo, this setting 
         can be ignored.
 
-    """
+    :param bool min_is_hidden:
+        Allows for changing if min or max is having the servo out of the way of 
+        the ultrasonic sensor
 
-    _rotation_position = 0
-    _wedge_position = 0
+    """
     
     def __init__(self, 
                  gpio,
                  strike_pin,
                  reverse_pin,
-                 pwm,
+                 servo_hat,
                  wedge_motor,
                  rotate_striker_pin,
                  rotate_min = 230,
-                 rotate_max = 475):
+                 rotate_max = 475,
+                 min_is_hidden = True):
 
         gpio.setup(strike_pin, gpio.OUT)
         #gpio.setup(reverse.pin, gpio.OUT)
@@ -112,13 +113,18 @@ class StrikerCommands:
         self.gpio = gpio
         self.strike_pin = strike_pin
         self.reverse_pin = reverse_pin
-        self.pwm = pwm
+        self.pwm = servo_hat
         self.wedge_motor = wedge_motor
         self.rotation_pin = rotate_striker_pin
         self.rotate_max = rotate_max
         self.rotate_min = rotate_min
 
         self.wedge_motor.rpm = 5
+
+        #used internally
+        self._rotation_position = 0
+        self._wedge_position = 0
+        self.min_is_hidden = min_is_hidden
         
     def strike(self):
        #forward
@@ -136,16 +142,22 @@ class StrikerCommands:
        #time.sleep(.03)
        #gpio.output(striker_gpio2, gpio.LOW)
 
+    def hide_striker(self):
+        """
+        Gets the striker out of the way of the distance sensor.
+        """
+        if self.min_is_hidden:
+          self.pwm.setPWM(self.rotation_pin, 0, self.rotate_min)
+        else:
+          self.pwm.setPWM(self.rotation_pin, 0, self.rotate_max)      
 
     def show_hide_striker(self):
-
         """
         When called either moves the the striker out of the way 
         of the Ultrasonic Distance Sensor or puts it back so 
         the ball can be hit. The hardware is a standard servo
         plugged into the servo hat.
         """
-        
         if self._rotation_position == 1:
           self.pwm.setPWM(self.rotation_pin, 0, self.rotate_max)
         elif self._rotation_position == 0:
@@ -162,9 +174,7 @@ class StrikerCommands:
             Negative numbers move one direction and positive
             numbers move the other direction, relative to 
             the current position.
-
         """
-
         m = self.wedge_motor
         #print "Pause in seconds: " + `m._T`
         self._wedge_position = self._wedge_position + degrees
@@ -181,8 +191,6 @@ class StrikerCommands:
         to strike the ball.  In these scenarios the position of
         wedge is important.
         """
-
-
         self.wedge_motor.move_to(0)
 
     #useful if your bot shuts down and you have to re-align the wedge and set to zero
@@ -192,5 +200,4 @@ class StrikerCommands:
         the user can align it and then set that position
         to zero. Helpful if the robot is not cleanly shutdown.
         """
-
         self._wedge_position = 0
