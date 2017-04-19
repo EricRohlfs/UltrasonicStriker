@@ -15,6 +15,15 @@ class Brains:
         we need to know how close is good enough given the limitations
         of our robot.
 
+    :param float ball_finding_turn_size:
+        Do you want to make big turns or small turns when
+        looking for the ball?  Bigger numbers do bigger turns,
+        smaller numbers create smaller turns.
+
+        Technically this just sets the time to sleep between the 
+        turning and stoping the turn.
+
+
     """
 
     def __init__(self, 
@@ -23,13 +32,64 @@ class Brains:
                 wheels, 
                 striker, 
                 strike_zone_center = 5.5,
-                strike_zone_tolerance = 0.75):
+                strike_zone_tolerance = 0.75,
+                ball_finding_turn_size = 0.01):
         self.ball_sensor = ball_sensor
         self.wall_sensor = wall_sensor
         self.wheels = wheels
         self.striker = striker
         self.strike_zone_center = strike_zone_center
         self.strike_zone_tolerance = strike_zone_tolerance
+        self.ball_finding_turn_size = 0.01
+        
+        self._keep_finding_the_ball = True
+
+    def find_ball_and_drive_left(self):
+        """
+        Looks for the ball by turning left and then drives to
+        the ball and stops.
+        """
+
+        self.find_ball_left()
+        self.drive_to_strike_zone()
+
+    def find_ball_and_drive_right(self):
+        """
+        Looks for the ball by turning right and then drives to
+        the ball and stops.
+        """
+
+        self.find_ball_right()
+        self.drive_to_strike_zone()
+
+    def find_ball_left(self):
+        """
+        Looks for the ball by turning the robot left.
+        """
+        self._keep_finding_the_ball = True
+        while self.keep_finding_the_ball and self.is_wall() :
+            self.wheels.turn_left()
+            time.sleep(self.ball_finding_turn_size)
+            self.wheels.stop()
+
+    def find_ball_right(self):
+        """
+        Looks for the ball by turning the robot right.
+        """
+
+        self._keep_finding_the_ball = True
+        while self.keep_finding_the_ball and self.is_wall() :
+            self.wheels.turn_right()
+            time.sleep(self.ball_finding_turn_size)
+            self.wheels.stop()
+         
+    def stop_finding_the_ball(self):
+        """
+        Manual override to stop searching for the ball.
+        Helpful if you need to change from searching left
+        to searching right.
+        """
+        self.keep_finding_the_ball = False
 
     def is_wall(self):
         """
@@ -45,7 +105,7 @@ class Brains:
         else:
             return False
 
-    def is_in_strike_zone(self, ball_distance):
+    def is_ball_in_strike_zone(self, ball_distance):
         """
         The robot will never stop exactly on center, but we want to get
         as close as we can and still have a chance of striking the ball.
@@ -72,11 +132,11 @@ class Brains:
 
         ball_distance = self.ball_sensor.distance() 
 
-        if self.is_in_strike_zone(ball_distance):
+        if self.is_ball_in_strike_zone(ball_distance):
             return # nothing to do if we are in the zone
 
         how_far_to_go = abs(ball_distance - self.strike_zone_center)
-        drive_duration = self.get_drive_time(how_far_to_go)
+        drive_duration = self.calculate_driving_time(how_far_to_go)
 
         if ball_distance > self.strike_zone_center :
             print("foward")
@@ -89,8 +149,7 @@ class Brains:
              time.sleep(drive_duration)
              self.wheels.stop()
 
-
-    def get_drive_time(self, distance_to_go):
+    def calculate_driving_time(self, distance_to_go):
        """
        how long the robot should go forward or backward till 
        the ball is in the strike zone
@@ -103,3 +162,11 @@ class Brains:
        result = round(revolutions_needed * time_for_one_rotation, 4)
        #todo: might need to shave little bit to account for processing time.
        return result
+
+
+    @property
+    def keep_finding_the_ball(self):
+        return self._keep_finding_the_ball
+    @keep_finding_the_ball.setter
+    def keep_finding_the_ball(self,value):
+        self._keep_finding_the_ball = value
