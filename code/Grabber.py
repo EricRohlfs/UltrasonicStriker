@@ -144,7 +144,7 @@ class Grabber:
           #ensure servos are where we want them.
           if lifter is not None:
             self.lift_up_or_down()
-          self.grab_release()
+          #self.grab_release()
         
 
     # Either grabs or releases

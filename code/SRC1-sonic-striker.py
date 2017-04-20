@@ -20,15 +20,16 @@ from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
 from Grabber import Grabber
 from Brains import Brains
-from unittest.mock import Mock as mock
+#import unittest
+#from unittest.mock import Mock as mock
 
 # Create dummy components first.
 # that way if a robot does not have these components
 # errors will not get thrown a the robot will not lock up on keypresses
-wall_sensor = mock()
-ball_sensor = mock()
-grabber = mock()
-striker = mock()
+wall_sensor = None #mock()
+ball_sensor = None #mock()
+grabber = None #mock()
+striker = None #mock()
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -129,8 +130,8 @@ if has_grabber:
   grabber = Grabber(servo_hat,
                   grip_left_pin,
                   grip_right_pin,
-                  servo_min = 300,
-                  servo_max=450)
+                  servo_min = 467,
+                  servo_max=600)
 
 if has_ball_sensor and has_wall_sensor and has_wheels and has_striker:
    brains = Brains(ball_sensor, wall_sensor, wheels, striker)
