@@ -203,7 +203,6 @@ class MyFrame(tk.Frame):
             elif event.char in ["3"]:
               grabber.servo_1_open_or_close()
               text.insert('end',"grabber.servo1 ") 
-
             elif event.char in ["4"]:
               grabber.lift_up_or_down()
               text.insert('end',"grabber.lifter ") 
