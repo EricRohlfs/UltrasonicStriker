@@ -1,6 +1,66 @@
 #from Adafruit_PWM_Servo_Driver import PWM
 from time import sleep
 
+class ServoSettings:
+    """
+    :param int pin_number:
+        Number from the hat board that the servo is plugged into.
+
+    :param int min_setting:
+        min and max set how far up or down the servo moves.
+    
+    :param int max_setting:
+        min and max set how for up or down the servo moves.
+    
+    :param float speed:
+        how fast or slow the servo moves.
+        Setting to 0.0 is full speed.
+        This just sets a wait time.
+
+    :param int steps:
+        Used along with speed, how far to move.
+
+        For example:
+            if min = 400 and max = 450,
+            then we will move to 405, sleep,
+            then we move to 410, sleep, 415, sleep
+            
+            The sleep time is set by the speed setting.
+    
+    :pamarm bool reverse_min_and_max:
+        Servos can be mounted differently and up is down and down is up.
+        Setting this to True will reverse the expected directions to match 
+        your robot.
+    """
+
+    def __init__(self, 
+                 pin_number, 
+                 min_setting, 
+                 max_setting,
+                 speed=0.5,
+                 steps=5,
+                 reverse_min_and_max = False):
+          self.pin = pin_number
+          self._min = min_setting
+          self._max = max_setting
+          self.speed = speed
+          self.reverse_min_and_max = reverse_min_and_max
+
+    @property
+    def min(self):
+        if self.reverse_min_and_max:
+            return self._max
+        else:
+            return self._min
+    
+    @property
+    def max(self):
+        if self.reverse_min_and_max:
+            return self._min
+        else:
+            return self._max
+
+
 class Grabber:
     """
     Creates a grabbing claw using two mini servos, to slowly grab something of a known size such as a foosball.
@@ -33,6 +93,10 @@ class Grabber:
         This really just adjusts the wait time between movements.
         How long to wait before making the next micro movement.
     
+    :param ServoSettings servo_lifter:
+        The servo settings for the servo to lift the grabber up
+        after it grabs the ball. 
+    
     """
     
     # user servo_min and servo_max to adjust how far the grabber opens or closes    
@@ -40,6 +104,7 @@ class Grabber:
                  servo_hat,
                  servo1_pin,
                  servo2_pin,
+                 lifter = None, #use newer settings object
                  servo_min=400,
                  servo_max=450,
                  step_size=5,
@@ -53,6 +118,8 @@ class Grabber:
           self.servo_hat = servo_hat
           self.servo1_pin = servo1_pin
           self.servo2_pin = servo2_pin
+          self.lifter = lifter
+          self.lifter_last_state = 0 # 0 or 1
           self.max = servo_max
           self.min = servo_min
           self.step_size = step_size
@@ -73,6 +140,11 @@ class Grabber:
             self.servo_2_min = self.min
           if servo_2_max is None:
             self.servo_2_max = self.max
+
+          #ensure servos are where we want them.
+          if lifter is not None:
+            self.lift_up_or_down()
+          self.grab_release()
         
 
     # Either grabs or releases
@@ -136,4 +208,19 @@ class Grabber:
             if self.servo_2_last_state == 0:
                 pin2_position = pin2_position + self.step_size
             sleep(self.speed)
-        
+
+    def lift_up_or_down(self):
+        position = self.lifter.min #set default position
+    
+        self.lifter_last_state = 1 - self.lifter_last_state
+        #switch the starting values  
+        if self.lifter_last_state == 1:
+            position =  self.lifter.max
+
+        while(self.lifter.min <= position <= self.lifter.max): 
+            self.servo_hat.setPWM(self.lifter.pin, 0, position)
+            if self.lifter_last_state == 1:
+                position = position - self.step_size
+            if self.lifter_last_state == 0:
+                position = position + self.step_size
+            sleep(self.lifter.speed)    

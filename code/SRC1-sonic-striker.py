@@ -1,8 +1,13 @@
+#If your robot does not have a feature set it to false
+has_ball_sensor = True
+has_wall_sensor = True
+has_wheels = True
+has_grabber = True
+has_striker = True
+
 #!/usr/bin/python
-#Working SRC 2017 Code for 4 Servo Control
-#2 Drive wheels, 1 Gripper and 1 Arm
 #Revised 11.29.16 - Kevin Pace
-#Refactored / 2016-4-7 Eric Rohlfs
+#Rewritten 2016-4-7 Eric Rohlfs
 
 # http://belikeotherpeople.co.uk/elevatedtopography/?p=138
 import sys
@@ -15,6 +20,15 @@ from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
 from Grabber import Grabber
 from Brains import Brains
+from unittest.mock import Mock as mock
+
+# Create dummy components first.
+# that way if a robot does not have these components
+# errors will not get thrown a the robot will not lock up on keypresses
+wall_sensor = mock()
+ball_sensor = mock()
+grabber = mock()
+striker = mock()
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -50,7 +64,6 @@ show_hide_striker_pin = 4
 grip_left_pin = 6
 grip_right_pin = 7
 
-
 """
   GPIO pins are assigned here to keep them organized
   GPIO numbers are unusal,
@@ -64,7 +77,7 @@ gpio.setmode(gpio.BOARD)
 striker_pin = 15 #gpio22
 striker_reverse_pin = 16 #gpio23
 
-# four gpio pins are needed for the striker steper
+# Four gpio pins are needed for the striker stepper
 # Note: not all robots have a rotating striker head.
 striker_stepper_IN1 = 29 #or gpio5
 striker_stepper_IN2 = 31 #or gpio6
@@ -86,25 +99,24 @@ sonic_in2 = 11 #gpio17
 sonic_in3 = 12 #gpio18
 sonic_in4 = 13 #gpio27
 
-#construct a ball sensor to find the ball using a Distance Sensor
-ball_sensor = DistanceSensor(gpio, ball_sensor_echo_pin, ball_sensor_trigger_pin, None)
-
-wall_sensor = DistanceSensor(gpio, wall_sensor_echo_pin, wall_sensor_trigger_pin, None)
-
 # The wheels that make the robot go forward and backward
-wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin)
+if has_wheels:
+  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin)
 
-"""
-Using an universal power door actuator and an L298N H-Bridge
-the code will move the actuator forward, wait, then retract
-"""
-# STRIKER
-wedge_motor = Motor([striker_stepper_IN1,
+#construct a ball sensor to find the ball using a Distance Sensor
+if has_ball_sensor:
+  ball_sensor = DistanceSensor(gpio, ball_sensor_echo_pin, ball_sensor_trigger_pin, None)
+
+if has_wall_sensor:
+  wall_sensor = DistanceSensor(gpio, wall_sensor_echo_pin, wall_sensor_trigger_pin, None)
+
+if has_striker:
+  wedge_motor = Motor([striker_stepper_IN1,
                      striker_stepper_IN2,
                      striker_stepper_IN3,
                      striker_stepper_IN4])
-
-striker = StrikerCommands(gpio,
+                     
+  striker = StrikerCommands(gpio,
                           striker_pin,
                           striker_reverse_pin,
                           servo_hat,
@@ -113,13 +125,15 @@ striker = StrikerCommands(gpio,
                           rotate_min = 150,
                           rotate_max = 360)
 
-grabber = Grabber(servo_hat,
+if has_grabber:
+  grabber = Grabber(servo_hat,
                   grip_left_pin,
                   grip_right_pin,
                   servo_min = 300,
                   servo_max=450)
 
-brains = Brains(ball_sensor, wall_sensor, wheels, striker)
+if has_ball_sensor and has_wall_sensor and has_wheels and has_striker:
+   brains = Brains(ball_sensor, wall_sensor, wheels, striker)
 
 # Keyboard stuff
 import Tkinter as tk
@@ -183,6 +197,17 @@ class MyFrame(tk.Frame):
               wall_distance = "%f cm " % wall_sensor.distance()
               text.insert('end'," ball wall: " + ball_distance + " " + ball_distance )
               text.insert('end'," ball wall: " + wall_distance + " " + wall_distance  )
+            
+            #grabber
+            elif event.char in ["3"]:
+              grabber.servo_1_open_or_close()
+              text.insert('end',"grabber.servo1 ") 
+
+            elif event.char in ["4"]:
+              grabber.lift_up_or_down()
+              text.insert('end',"grabber.lifter ") 
+
+            #striker
             elif event.char in ["5"]:
               striker.show_hide_striker()
               text.insert('end',"striker up down ")
@@ -210,7 +235,6 @@ class MyFrame(tk.Frame):
 
 
 # Program
-
 root = tk.Tk()
 root.geometry('800x600')
 root.attributes('-fullscreen', False)
@@ -221,4 +245,3 @@ app1 = MyFrame(root)
 root.mainloop()
 
 print("done")
-

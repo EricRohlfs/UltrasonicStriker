@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock as mock, patch, PropertyMock, call
-from Grabber import Grabber
+from Grabber import Grabber, ServoSettings
 
 class GrabberTests(unittest.TestCase):
 
@@ -79,6 +79,40 @@ class GrabberTests(unittest.TestCase):
         #prove the value was changed
         self.assertEqual(0, grabber.servo_2_last_state)
         servo_hat.dispose()
+    
+     def test_can_lift_up_ball(self):
+        servo_hat = mock(name='servo_hat')
+
+        lifter = ServoSettings(pin_number=8, min_setting=350, max_setting=375)
+        grabber = Grabber(servo_hat, 6, 7, lifter, servo_min = 400, servo_max = 450) 
+        grabber.lift_up_or_down()
+
+        expected_calls =  [call(8, 0, 350),
+                           call(8, 0, 355),
+                           call(8, 0, 360),
+                           call(8, 0, 365),
+                           call(8, 0, 370),
+                           call(8, 0, 375)]
+
+        servo_hat.setPWM.assert_has_calls(expected_calls, any_order=False)
+
+     def test_can_lift_can_put_down_the_grabber(self):
+        servo_hat = mock(name='servo_hat')
+
+        lifter = ServoSettings(pin_number=8, min_setting=350, max_setting=375)
+        grabber = Grabber(servo_hat, 6, 7, lifter, servo_min = 400, servo_max = 450) 
+        grabber.lifter_last_state = 1
+        grabber.lift_up_or_down()
+
+        expected_calls =  [call(8, 0, 375),
+                           call(8, 0, 370),
+                           call(8, 0, 365),
+                           call(8, 0, 360),
+                           call(8, 0, 355),
+                           call(8, 0, 350)]
+
+        servo_hat.setPWM.assert_has_calls(expected_calls, any_order=False)
+
 
 if __name__ == '__main__':
     unittest.main()
