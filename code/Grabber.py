@@ -37,7 +37,7 @@ class ServoSettings:
                  pin_number, 
                  min_setting, 
                  max_setting,
-                 speed=0.5,
+                 speed=0.05,
                  steps=5,
                  reverse_min_and_max = False):
           self.pin = pin_number

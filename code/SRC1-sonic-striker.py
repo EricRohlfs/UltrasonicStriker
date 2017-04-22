@@ -18,7 +18,7 @@ import time
 from DistanceSensor import DistanceSensor
 from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
-from Grabber import Grabber
+from Grabber import Grabber, ServoSettings
 from Brains import Brains
 #import unittest
 #from unittest.mock import Mock as mock
@@ -49,7 +49,7 @@ except:
 # Note if you'd like more debug output you can instead run:
 #servo_hat = PWM(0x40, debug=True)
 
-servo_hat.setPWMFreq(60) # Set frequency to 60 Hz
+servo_hat.setPWMFreq(50) # Set frequency to 60 Hz
 
 """
   pwm is the ServoHat
@@ -64,6 +64,7 @@ servoLift = 2
 show_hide_striker_pin = 4
 grip_left_pin = 6
 grip_right_pin = 7
+grip_lifter_pin = 8
 
 """
   GPIO pins are assigned here to keep them organized
@@ -127,11 +128,15 @@ if has_striker:
                           rotate_max = 360)
 
 if has_grabber:
+  lift = ServoSettings(grip_lifter_pin,410,475)
+  
   grabber = Grabber(servo_hat,
                   grip_left_pin,
                   grip_right_pin,
-                  servo_min = 467,
-                  servo_max=600)
+                  lifter= lift,
+                  servo_min = 140,
+                  servo_max=200
+                  )
 
 if has_ball_sensor and has_wall_sensor and has_wheels and has_striker:
    brains = Brains(ball_sensor, wall_sensor, wheels, striker)
