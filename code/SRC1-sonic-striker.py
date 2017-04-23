@@ -62,9 +62,8 @@ left_wheel_pin = 0
 right_wheel_pin = 1
 servoLift = 2
 show_hide_striker_pin = 4
-grip_left_pin = 6
-grip_right_pin = 7
-grip_lifter_pin = 8
+gripper_1_pin = 8
+gripper_1_lifter_pin = 9
 
 """
   GPIO pins are assigned here to keep them organized
@@ -128,11 +127,11 @@ if has_striker:
                           rotate_max = 360)
 
 if has_grabber:
-  lift = ServoSettings(grip_lifter_pin,410,475)
+  lift = ServoSettings(gripper_1_lifter_pin,410,475)
   
   grabber = Grabber(servo_hat,
-                  grip_left_pin,
-                  grip_right_pin,
+                  gripper_1_pin,
+                  None,
                   lifter= lift,
                   servo_min = 140,
                   servo_max=200
