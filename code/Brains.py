@@ -22,6 +22,10 @@ class Brains:
 
         Technically this just sets the time to sleep between the 
         turning and stoping the turn.
+
+    :param float is_wall_sensitivity:
+        Could be the width of the ball or a much greater distance,
+        helps adjust for answering the question is wall?
     """
 
     def __init__(self, 
@@ -31,15 +35,17 @@ class Brains:
                 striker, 
                 strike_zone_center = 5.5,
                 strike_zone_tolerance = 0.75,
-                ball_finding_turn_size = 0.01):
+                ball_finding_turn_size = 0.05,
+                is_wall_sensitivity = 2):
         self.ball_sensor = ball_sensor
         self.wall_sensor = wall_sensor
         self.wheels = wheels
         self.striker = striker
         self.strike_zone_center = strike_zone_center
         self.strike_zone_tolerance = strike_zone_tolerance
-        self.ball_finding_turn_size = 0.01
+        self.ball_finding_turn_size = ball_finding_turn_size
         self._keep_finding_the_ball = True
+        self.is_wall_sensitivity = is_wall_sensitivity
 
     def find_ball_left_and_drive_to_ball(self):
         """
@@ -96,11 +102,15 @@ class Brains:
         chances are we see a ball
         """
         ball_distance = self.ball_sensor.distance()
+        time.sleep(.02)
         wall_distance = self.wall_sensor.distance()
-        delta = abs(wall_distance - ball_distance )
-        if 0 <= delta <= 5 :
+        #print("ball distance %f" % ball_distance)
+        delta = abs(wall_distance - ball_distance)
+        if delta <= self.is_wall_sensitivity :
+            #print("is wall with delta " , delta)
             return True
         else:
+            #print("is not wall with delta ", delta)
             return False
 
     def is_ball_in_strike_zone(self, ball_distance):
