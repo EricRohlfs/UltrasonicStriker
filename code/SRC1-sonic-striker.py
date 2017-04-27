@@ -26,10 +26,10 @@ from Brains import Brains
 # Create dummy components first.
 # that way if a robot does not have these components
 # errors will not get thrown a the robot will not lock up on keypresses
-wall_sensor = None #mock()
-ball_sensor = None #mock()
-grabber = None #mock()
-striker = None #mock()
+#wall_sensor = None #mock()
+#ball_sensor = None #mock()
+#grabber = None #mock()
+#striker = None #mock()
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -49,7 +49,7 @@ except:
 # Note if you'd like more debug output you can instead run:
 #servo_hat = PWM(0x40, debug=True)
 
-servo_hat.setPWMFreq(50) # Set frequency to 60 Hz
+servo_hat.setPWMFreq(50) # Set frequency to 50 HZ normally 60 but using so many smaller servos.
 
 """
   pwm is the ServoHat
