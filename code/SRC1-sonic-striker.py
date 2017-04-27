@@ -191,7 +191,9 @@ class MyFrame(tk.Frame):
               
             #Brains
             elif event.char =="1":
-              brains.find_ball_left_and_drive_to_ball()
+              #brains.find_ball_left_and_drive_to_ball()
+              brains.is_wall_sensitivity = 2.5      
+              brains.find_ball_left()
               text.insert('end',"find ball left")
             elif event.char == "2":
               brains.find_ball_right_and_drive_to_ball()
@@ -199,9 +201,10 @@ class MyFrame(tk.Frame):
             elif event.char == "p":
               # mainly for testing when the robot boots up
               ball_distance = "%f cm " % ball_sensor.distance()
+              time.sleep(.5)
               wall_distance = "%f cm " % wall_sensor.distance()
-              text.insert('end'," ball wall: " + ball_distance + " " + ball_distance )
-              text.insert('end'," ball wall: " + wall_distance + " " + wall_distance  )
+              text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
+              #text.insert('end'," ball wall: " + wall_distance + " " + wall_distance  )
             
             #grabber
             elif event.char in ["3"]:
