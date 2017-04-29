@@ -105,10 +105,12 @@ class StrikerCommands:
                  rotate_striker_pin,
                  rotate_min = 230,
                  rotate_max = 475,
-                 min_is_hidden = True):
+                 min_is_hidden = True,
+                 power = 0.06,
+                 reverse_power = 0.01):
 
         gpio.setup(strike_pin, gpio.OUT)
-        #gpio.setup(reverse.pin, gpio.OUT)
+        gpio.setup(reverse_pin, gpio.OUT)
 
         self.gpio = gpio
         self.strike_pin = strike_pin
@@ -120,27 +122,31 @@ class StrikerCommands:
         self.rotate_min = rotate_min
 
         self.wedge_motor.rpm = 5
+        self.power = power
+        self.reverse_power = reverse_power
 
         #used internally
         self._rotation_position = 0
         self._wedge_position = 0
         self.min_is_hidden = min_is_hidden
-        
-    def strike(self):
-       #forward
-       #print("strike")
-       self.gpio.output(self.strike_pin, self.gpio.HIGH)
-       time.sleep(.04) # you may need to tweak this number if striker does not bounce back up
-       self.gpio.output(self.strike_pin, self.gpio.LOW)
 
-       # if you need to manually retract the striker,
-       #   uncomment the code below
-       #pause
-       #time.sleep(1)
-       #backward
-       #gpio.output(striker_gpio2, gpio.HIGH)
-       #time.sleep(.03)
-       #gpio.output(striker_gpio2, gpio.LOW)
+        
+    def strike(self, reverse=False):
+       """
+       """
+      
+       if reverse:
+           print("striker up")
+           self.gpio.output(self.reverse_pin, self.gpio.HIGH)
+           time.sleep(self.reverse_power) # you may need to tweak this number if striker does not bounce back up
+           self.gpio.output(self.reverse_pin, self.gpio.LOW)
+           
+       else:
+           print("strike")
+           self.gpio.output(self.strike_pin, self.gpio.HIGH)
+           time.sleep(self.power) # you may need to tweak this number if striker does not bounce back up
+           self.gpio.output(self.strike_pin, self.gpio.LOW)
+       
 
     def hide_striker(self):
         """

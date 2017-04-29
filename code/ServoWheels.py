@@ -22,13 +22,13 @@ class ServoBasics:
 
 class ServoWheels:
 
-    def __init__(self, pwm, left_wheel, right_wheel):
+    def __init__(self, pwm, left_wheel, right_wheel, switch_foward_backward_commands = False ):
           self._pwm = pwm
           self.basics = ServoBasics(self._pwm)
           self._left_wheel = left_wheel
           self._right_wheel = right_wheel
           self._switch_left_right_commands = False
-          self._switch_foward_backward_commands = False  
+          self._switch_foward_backward_commands = switch_foward_backward_commands  
     
     #for the turn left and turn right functions, edit the sleep values for back up and turn to get the servo timing correct
     def turn_left(self):
@@ -49,6 +49,7 @@ class ServoWheels:
             
     def foward(self):
           if(self._switch_foward_backward_commands):
+               print("forward swithced")
                self.basics.servo_counter_clockwise(self._left_wheel)
                self.basics.servo_clockwise(self._right_wheel)
           else:  

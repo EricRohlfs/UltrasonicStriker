@@ -33,10 +33,11 @@ class Brains:
                 wall_sensor, 
                 wheels, 
                 striker, 
-                strike_zone_center = 5.5,
-                strike_zone_tolerance = 0.75,
-                ball_finding_turn_size = 0.05,
-                is_wall_sensitivity = 2):
+                strike_zone_center = 5,
+                strike_zone_tolerance = 0.4,
+                ball_finding_turn_size = 0.025,
+                is_wall_sensitivity = 2,
+                sensor_to_striker_distance = 0 ):
         self.ball_sensor = ball_sensor
         self.wall_sensor = wall_sensor
         self.wheels = wheels
@@ -46,6 +47,7 @@ class Brains:
         self.ball_finding_turn_size = ball_finding_turn_size
         self._keep_finding_the_ball = True
         self.is_wall_sensitivity = is_wall_sensitivity
+        self.sensor_to_striker_distance = sensor_to_striker_distance
 
     def find_ball_left_and_drive_to_ball(self):
         """
@@ -69,23 +71,35 @@ class Brains:
         """
         if self.striker is not None:
             self.striker.hide_striker()
+            time.sleep(.1)
+            
         self._keep_finding_the_ball = True
+        i = 0
         while self.keep_finding_the_ball and self.is_wall() :
+            if i > 10:
+                break
             self.wheels.turn_left()
             time.sleep(self.ball_finding_turn_size)
             self.wheels.stop()
-
+            time.sleep(0.1)
+            
     def find_ball_right(self):
         """
         Looks for the ball by turning the robot right.
         """
         if self.striker is not None:
             self.striker.hide_striker()
+            time.sleep(.1)
+            
         self._keep_finding_the_ball = True
+        i = 0
         while self.keep_finding_the_ball and self.is_wall() :
+            if i > 10:
+                break
             self.wheels.turn_right()
             time.sleep(self.ball_finding_turn_size)
             self.wheels.stop()
+            time.sleep(0.1)
          
     def stop_finding_the_ball(self):
         """
@@ -102,7 +116,7 @@ class Brains:
         chances are we see a ball
         """
         ball_distance = self.ball_sensor.distance()
-        time.sleep(.02)
+        time.sleep(.05)
         wall_distance = self.wall_sensor.distance()
         #print("ball distance %f" % ball_distance)
         delta = abs(wall_distance - ball_distance)
@@ -135,25 +149,30 @@ class Brains:
 
     def drive_to_strike_zone(self):
         #if we don't have a ball nothing to do here.
-        if self.is_wall():
-            return
+        #if self.is_wall():
+        #    print("drive to strike zone is_wall True, doing nothing")
+        #    return
         if self.striker is not None:
             self.striker.hide_striker()
+            time.sleep(.1)
+            
         ball_distance = self.ball_sensor.distance() 
 
         if self.is_ball_in_strike_zone(ball_distance):
+            print("DriveToStrikeZone ball is in strike zone")
             return # nothing to do if we are in the zone
 
         how_far_to_go = abs(ball_distance - self.strike_zone_center)
-        drive_duration = self.calculate_driving_time(how_far_to_go)
+        drive_duration = self.calculate_driving_time(how_far_to_go) * .6
 
         if ball_distance > self.strike_zone_center :
-            print("foward")
+            print("foward" , drive_duration)
             self.wheels.foward()
             time.sleep(drive_duration)
             self.wheels.stop()
 
         elif ball_distance < self.strike_zone_center :
+             print("backward")
              self.wheels.backward()
              time.sleep(drive_duration)
              self.wheels.stop()
@@ -166,11 +185,12 @@ class Brains:
        rpm = 50 #parallax continuous rotation servo can do 50 revolutions per minute
        wheel_diameter = 6.985 #cm or the vex wheels we are using are 2.75 inch wheels 6.985 is the cm conversion
        circumference = wheel_diameter * 3.14
-       revolutions_needed = distance_to_go / circumference 
+       revolutions_needed = (distance_to_go + self.sensor_to_striker_distance) / circumference 
        time_for_one_rotation = 60/rpm # in seconds
        result = round(revolutions_needed * time_for_one_rotation, 4)
+       
        #todo: might need to shave little bit to account for processing time.
-       return result
+       return result 
 
     @property
     def keep_finding_the_ball(self):

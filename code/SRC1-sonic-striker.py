@@ -4,6 +4,7 @@ has_wall_sensor = True
 has_wheels = True
 has_grabber = True
 has_striker = True
+has_tank_turret = False
 
 #!/usr/bin/python
 #Revised 11.29.16 - Kevin Pace
@@ -20,16 +21,6 @@ from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
 from Grabber import Grabber, ServoSettings
 from Brains import Brains
-#import unittest
-#from unittest.mock import Mock as mock
-
-# Create dummy components first.
-# that way if a robot does not have these components
-# errors will not get thrown a the robot will not lock up on keypresses
-#wall_sensor = None #mock()
-#ball_sensor = None #mock()
-#grabber = None #mock()
-#striker = None #mock()
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -61,9 +52,11 @@ servo_hat.setPWMFreq(50) # Set frequency to 60 Hz
 left_wheel_pin = 0
 right_wheel_pin = 1
 servoLift = 2
+turret_pin = 3
 show_hide_striker_pin = 4
 gripper_1_pin = 8
 gripper_1_lifter_pin = 9
+
 
 """
   GPIO pins are assigned here to keep them organized
@@ -102,7 +95,7 @@ sonic_in4 = 13 #gpio27
 
 # The wheels that make the robot go forward and backward
 if has_wheels:
-  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin)
+  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin, switch_foward_backward_commands = True)
 
 #construct a ball sensor to find the ball using a Distance Sensor
 if has_ball_sensor:
@@ -123,8 +116,8 @@ if has_striker:
                           servo_hat,
                           wedge_motor,
                           show_hide_striker_pin,
-                          rotate_min = 150,
-                          rotate_max = 360)
+                          rotate_min = 100,
+                          rotate_max = 305)
 
 if has_grabber:
   lift = ServoSettings(gripper_1_lifter_pin,410,475)
@@ -139,6 +132,10 @@ if has_grabber:
 
 if has_ball_sensor and has_wall_sensor and has_wheels and has_striker:
    brains = Brains(ball_sensor, wall_sensor, wheels, striker)
+   brains.is_wall_sensitivity = 2.5
+
+if has_tank_turret:
+   turret = ServoBasics(servo_hat)     
 
 # Keyboard stuff
 import Tkinter as tk
@@ -171,11 +168,9 @@ class MyFrame(tk.Frame):
               gpio.cleanup()  
               root.destroy()
               
-
-            #Reverse Left Or Right Keys for the wheels
-            elif event.char == "r":
-              wheels.switch_foward_backward_commands = True       
+             
             #Wheels
+            #if you need to switch foward and backward, set in constructor
             elif event.char == "w" or event.keysym == 'Up':
               text.insert('end', ' FORWARD ')
               wheels.foward() 
@@ -190,21 +185,24 @@ class MyFrame(tk.Frame):
               wheels.turn_left() 
               
             #Brains
-            elif event.char =="1":
-              #brains.find_ball_left_and_drive_to_ball()
-              brains.is_wall_sensitivity = 2.5      
+            elif event.char =="1":                  
               brains.find_ball_left()
               text.insert('end',"find ball left")
+              
             elif event.char == "2":
-              brains.find_ball_right_and_drive_to_ball()
+              brains.find_ball_right()
               text.insert('end',"find ball right")
+              
             elif event.char == "p":
               # mainly for testing when the robot boots up
               ball_distance = "%f cm " % ball_sensor.distance()
               time.sleep(.5)
               wall_distance = "%f cm " % wall_sensor.distance()
               text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
-              #text.insert('end'," ball wall: " + wall_distance + " " + wall_distance  )
+
+            elif event.char == "[":
+              brains.drive_to_strike_zone()
+              
             
             #grabber
             elif event.char in ["3"]:
@@ -218,19 +216,32 @@ class MyFrame(tk.Frame):
             elif event.char in ["5"]:
               striker.show_hide_striker()
               text.insert('end',"striker up down ")
+
             elif event.char == "6":
               #change the number for bigger or smaller turns  
               striker.turn_wedge(10)
               text.insert('end',"turning striker")
+
             elif event.char == "7":
               #change the number for bigger or smaller turns  
               striker.turn_wedge(-10)
               text.insert('end',"turning striker")
+              
             elif event.char == "9":
-              grabber.grab_release()
-            elif event.char == "0":
               text.insert('end',' strike ')
               striker.strike()
+
+            elif event.char == "0":
+              text.insert('end',' striker up ')
+              striker.strike(reverse=True)
+
+            #Tank cannon style striker with continuous rotation servo
+            # not recomended, but one team has this  
+            elif event.char == "-":
+              turret.servo_clockwise(turret_pin)      
+            elif event.char == "=":
+              turret.servo_counter_clockwise(turret_pin)       
+              
             
     def key_release(self, event):
         self.afterId = self.after_idle( self.process_release, event )
