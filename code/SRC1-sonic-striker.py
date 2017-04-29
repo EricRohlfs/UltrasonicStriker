@@ -40,7 +40,7 @@ except:
 # Note if you'd like more debug output you can instead run:
 #servo_hat = PWM(0x40, debug=True)
 
-servo_hat.setPWMFreq(50) # Set frequency to 60 Hz
+servo_hat.setPWMFreq(50) # Set frequency to 50 HZ normally 60 but using so many smaller servos.
 
 """
   pwm is the ServoHat
