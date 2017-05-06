@@ -33,10 +33,10 @@ class Brains:
                 wall_sensor, 
                 wheels, 
                 striker,
-                strike_zone_center = 50,
+                strike_zone_center = 105,
                 strike_zone_tolerance = 4,
-                ball_finding_turn_size = 0.3,
-                is_wall_sensitivity = 2,
+                ball_finding_turn_size = 0.04,
+                is_wall_sensitivity = 5,
                 sensor_to_striker_distance = 0 ):
         self.ball_sensor = ball_sensor
         self.wall_sensor = wall_sensor
@@ -48,7 +48,35 @@ class Brains:
         self._keep_finding_the_ball = True
         self.is_wall_sensitivity = is_wall_sensitivity
         self.sensor_to_striker_distance = sensor_to_striker_distance
+        self.search_ticks = 8
+        self.find_ball_first_time = True
 
+    def find_ball(self):
+        if self.striker is not None:
+            self.striker.hide_striker()
+            time.sleep(.2)
+        if self.find_ball_first_time:    
+            self.find_ball_left()
+            self.find_ball_first_time = False
+            
+        l_success = self.find_ball_left()
+        print(l_success)
+        if l_success is not None:
+            r_success = self.find_ball_right()
+            print(r_success)
+        #if l_success:
+        #    self.drive_to_strike_zone()
+            #center up
+            #self.wheels.turn_left()
+            #time.sleep(self.ball_finding_turn_size)
+            #self.wheels.stop()
+        #if r_success:
+        #    self.drive_to_strike_zone()
+            #center up
+            #self.wheels.turn_left()
+            #time.sleep(self.ball_finding_turn_size)
+            #self.wheels.stop()
+        
     def find_ball_left_and_drive_to_ball(self):
         """
         Looks for the ball by turning left and then drives to
@@ -56,6 +84,11 @@ class Brains:
         """
         self.find_ball_left()
         self.drive_to_strike_zone()
+        #center up
+        self.wheels.turn_left()
+        time.sleep(self.ball_finding_turn_size)
+        self.wheels.stop()
+        
 
     def find_ball_right_and_drive_to_ball(self):
         """
@@ -69,19 +102,22 @@ class Brains:
         """
         Looks for the ball by turning the robot left.
         """
-        if self.striker is not None:
-            self.striker.hide_striker()
-            time.sleep(.1)
-            
+           
         self._keep_finding_the_ball = True
-        i = 0
-        while self.keep_finding_the_ball and self.is_wall() :
-            if i > 10:
+        i = 1
+        while self.is_wall():
+            if i > self.search_ticks:
                 break
             self.wheels.turn_left()
             time.sleep(self.ball_finding_turn_size)
             self.wheels.stop()
-            time.sleep(0.1)
+            time.sleep(0.2)
+            i = i + 1
+            print(i)
+        if i < self.search_ticks:
+            return True
+        else:
+            return False
             
     def find_ball_right(self):
         """
@@ -94,12 +130,18 @@ class Brains:
         self._keep_finding_the_ball = True
         i = 0
         while self.keep_finding_the_ball and self.is_wall() :
-            if i > 10:
+            if i > self.search_ticks * 2:
                 break
             self.wheels.turn_right()
             time.sleep(self.ball_finding_turn_size)
             self.wheels.stop()
-            time.sleep(0.1)
+            time.sleep(0.2)
+            i = i + 1
+            print(i)
+        if i < self.search_ticks * 2:
+            return True
+        else:
+            return False    
          
     def stop_finding_the_ball(self):
         """
@@ -149,33 +191,35 @@ class Brains:
 
     def drive_to_strike_zone(self):
         #if we don't have a ball nothing to do here.
-        #if self.is_wall():
-        #    print("drive to strike zone is_wall True, doing nothing")
-        #    return
+        if self.is_wall():
+            print("drive to strike zone is_wall True, doing nothing")
+            return
         if self.striker is not None:
             self.striker.hide_striker()
             time.sleep(.1)
             
-        ball_distance = self.ball_sensor.distance() 
+        ball_distance = self.ball_sensor.distance()
+        print(ball_distance)
 
         if self.is_ball_in_strike_zone(ball_distance):
             print("DriveToStrikeZone ball is in strike zone")
             return # nothing to do if we are in the zone
 
         how_far_to_go = abs(ball_distance - self.strike_zone_center)
-        drive_duration = self.calculate_driving_time(how_far_to_go) * .9
+        drive_duration = self.calculate_driving_time(how_far_to_go) * .85
 
         if ball_distance > self.strike_zone_center :
             print("foward" , drive_duration)
             self.wheels.foward()
             time.sleep(drive_duration)
             self.wheels.stop()
+            #self.drive_to_strike_zone()
 
         elif ball_distance < self.strike_zone_center :
              print("backward")
-             self.wheels.backward()
-             time.sleep(drive_duration)
-             self.wheels.stop()
+             #self.wheels.backward()
+             #time.sleep(drive_duration)
+             #self.wheels.stop()
 
     def calculate_driving_time(self, distance_to_go):
        """

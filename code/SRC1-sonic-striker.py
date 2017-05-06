@@ -5,7 +5,6 @@ has_wheels = True
 has_grabber = True
 has_striker = True
 has_tank_turret = False
-#has_laser_distance_sensor
 
 #!/usr/bin/python
 #Revised 11.29.16 - Kevin Pace
@@ -97,7 +96,7 @@ sonic_in4 = 13 #gpio27
 
 # The wheels that make the robot go forward and backward
 if has_wheels:
-  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin, switch_foward_backward_commands = False)
+  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin, switch_foward_backward_commands = True)
 
 #construct a ball sensor to find the ball using a Distance Sensor
 if has_ball_sensor:
@@ -205,20 +204,24 @@ class MyFrame(tk.Frame):
             elif event.char == "p":
               ball_distance = "999"      
               # mainly for testing when the robot boots up
-              #try: 
-              ball_distance = (": %d mm" % ball_sensor.distance() )
-              #except:
-              #   print("failed")
-              #   text.insert('end'," failded")
-            
-              #ball_distance = "1" #"%f cm " % ball_sensor.distance()
-              #time.sleep(.5)
+              try: 
+                ball_distance = (": %d mm" % ball_sensor.distance() )
+              except:
+                text.insert('end'," failded")
+                
               wall_distance = "%.0f mm " % wall_sensor.distance()
               text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
 
             elif event.char == "[":
+              brains.find_ball()
+              #brains.drive_to_strike_zone()
+              #brains.is_ball_in_strike_zone()
+              #calculate_driving_time
+            elif event.char == "]":
+              #brains.find_ball()
               brains.drive_to_strike_zone()
-              
+              #brains.is_ball_in_strike_zone()
+              #calculate_driving_time  
             
             #grabber
             elif event.char in ["3"]:
