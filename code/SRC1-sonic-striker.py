@@ -95,7 +95,7 @@ sonic_in4 = 13 #gpio27
 
 # The wheels that make the robot go forward and backward
 if has_wheels:
-  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin, switch_foward_backward_commands = True)
+  wheels = ServoWheels(servo_hat,left_wheel_pin, right_wheel_pin, switch_foward_backward_commands = False)
 
 #construct a ball sensor to find the ball using a Distance Sensor
 if has_ball_sensor:
@@ -120,13 +120,13 @@ if has_striker:
                           rotate_max = 305)
 
 if has_grabber:
-  lift = ServoSettings(gripper_1_lifter_pin,410,475)
+  lift = ServoSettings(gripper_1_lifter_pin,440,475)
   
   grabber = Grabber(servo_hat,
                   gripper_1_pin,
                   None,
                   lifter= lift,
-                  servo_min = 140,
+                  servo_min = 130,
                   servo_max=200
                   )
 
