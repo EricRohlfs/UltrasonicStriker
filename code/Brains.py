@@ -29,13 +29,13 @@ class Brains:
     """
 
     def __init__(self, 
-                ball_sensor, 
+                ball_sensor, #this could be ultrasonic or TOF
                 wall_sensor, 
                 wheels, 
-                striker, 
-                strike_zone_center = 5,
-                strike_zone_tolerance = 0.4,
-                ball_finding_turn_size = 0.025,
+                striker,
+                strike_zone_center = 50,
+                strike_zone_tolerance = 4,
+                ball_finding_turn_size = 0.3,
                 is_wall_sensitivity = 2,
                 sensor_to_striker_distance = 0 ):
         self.ball_sensor = ball_sensor
@@ -163,7 +163,7 @@ class Brains:
             return # nothing to do if we are in the zone
 
         how_far_to_go = abs(ball_distance - self.strike_zone_center)
-        drive_duration = self.calculate_driving_time(how_far_to_go) * .6
+        drive_duration = self.calculate_driving_time(how_far_to_go) * .9
 
         if ball_distance > self.strike_zone_center :
             print("foward" , drive_duration)
@@ -183,7 +183,7 @@ class Brains:
        the ball is in the strike zone
        """
        rpm = 50 #parallax continuous rotation servo can do 50 revolutions per minute
-       wheel_diameter = 6.985 #cm or the vex wheels we are using are 2.75 inch wheels 6.985 is the cm conversion
+       wheel_diameter = 69.85 #mm or the vex wheels we are using are 2.75 inch wheels 6.985 is the cm conversion
        circumference = wheel_diameter * 3.14
        revolutions_needed = (distance_to_go + self.sensor_to_striker_distance) / circumference 
        time_for_one_rotation = 60/rpm # in seconds

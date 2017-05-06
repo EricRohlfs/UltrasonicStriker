@@ -75,9 +75,9 @@ class DistanceSensor:
         #calculate distance in centimeters
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
-        distance = round(distance,2)
+        distance = round(distance * 10, 2)
         #print(self._echo)
-        return distance # in cm
+        return distance # in mm
 
     def turn(self, degrees):
         """

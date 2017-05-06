@@ -7,7 +7,7 @@
 import sys
 from ST_VL6180x_scale3 import VL6180X_3 as VL6180X
 from time import sleep
-import RPi.GPIO as GPIO  # Import GPIO functions
+#import RPi.GPIO as GPIO  # Import GPIO functions
 
 """-- Setup --"""
 debug = False

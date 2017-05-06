@@ -177,6 +177,7 @@ class VL6180X_3:
         self.set_register(0x01ac, 0x3e)
         self.set_register(0x01a7, 0x1f)
         self.set_register(0x0030, 0x00)
+        self.default_settings()
        
         
         if self.debug:
@@ -322,6 +323,12 @@ class VL6180X_3:
         self.set_register(self.__VL6180X_I2C_SLAVE_DEVICE_ADDRESS, new_address)
         return self.get_register(self.__VL6180X_I2C_SLAVE_DEVICE_ADDRESS)
 
+    def distance(self):
+        """
+        Matches signature of other DistanceSensorLibrary
+        """
+        return self.get_distance()
+
     def get_distance(self):
         # Start Single shot mode
         self.set_register(self.__VL6180X_SYSRANGE_START, 0x01)
@@ -329,9 +336,11 @@ class VL6180X_3:
         if self.debug:
             print "Range status: %x" % \
                   self.get_register(self.__VL6180X_RESULT_RANGE_STATUS) & 0xF1
-        distance = self.get_register(self.__VL6180X_RESULT_RANGE_VAL)
+        distance1 = self.get_register(self.__VL6180X_RESULT_RANGE_VAL)
         self.set_register(self.__VL6180X_SYSTEM_INTERRUPT_CLEAR, 0x07)
-        return distance
+        # since we have a scaling of 3 we need to multiply by 3
+        result = (distance1 * 3)
+        return result
 
     def get_ambient_light(self, als_gain):
         # First load in Gain we are using, do it every time in case someone

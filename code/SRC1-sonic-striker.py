@@ -5,6 +5,7 @@ has_wheels = True
 has_grabber = True
 has_striker = True
 has_tank_turret = False
+#has_laser_distance_sensor
 
 #!/usr/bin/python
 #Revised 11.29.16 - Kevin Pace
@@ -21,6 +22,7 @@ from ServoWheels import ServoWheels, ServoBasics
 from striker import StrikerCommands
 from Grabber import Grabber, ServoSettings
 from Brains import Brains
+from ST_VL6180x_scale3 import VL6180X_3 as VL6180X
 
 try: #try to import the gpio libraries (need to download) and throw an exception if there is an error
         import RPi.GPIO as gpio
@@ -99,7 +101,12 @@ if has_wheels:
 
 #construct a ball sensor to find the ball using a Distance Sensor
 if has_ball_sensor:
-  ball_sensor = DistanceSensor(gpio, ball_sensor_echo_pin, ball_sensor_trigger_pin, None)
+  #ball_sensor = DistanceSensor(gpio, ball_sensor_echo_pin, ball_sensor_trigger_pin, None)
+  #ball_sensor = None
+  tof_address = 0x29
+  ball_sensor = VL6180X(address=tof_address, debug=False)
+  if ball_sensor.idModel != 0xB4:
+    print"Not a valid sensor id: %X" % ball_sensor.idModel
 
 if has_wall_sensor:
   wall_sensor = DistanceSensor(gpio, wall_sensor_echo_pin, wall_sensor_trigger_pin, None)
@@ -132,7 +139,9 @@ if has_grabber:
 
 if has_ball_sensor and has_wall_sensor and has_wheels and has_striker:
    brains = Brains(ball_sensor, wall_sensor, wheels, striker)
-   brains.is_wall_sensitivity = 2.5
+   brains.is_wall_sensitivity = 25
+
+
 
 if has_tank_turret:
    turret = ServoBasics(servo_hat)     
@@ -194,10 +203,17 @@ class MyFrame(tk.Frame):
               text.insert('end',"find ball right")
               
             elif event.char == "p":
+              ball_distance = "999"      
               # mainly for testing when the robot boots up
-              ball_distance = "%f cm " % ball_sensor.distance()
-              time.sleep(.5)
-              wall_distance = "%f cm " % wall_sensor.distance()
+              #try: 
+              ball_distance = (": %d mm" % ball_sensor.distance() )
+              #except:
+              #   print("failed")
+              #   text.insert('end'," failded")
+            
+              #ball_distance = "1" #"%f cm " % ball_sensor.distance()
+              #time.sleep(.5)
+              wall_distance = "%.0f mm " % wall_sensor.distance()
               text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
 
             elif event.char == "[":
