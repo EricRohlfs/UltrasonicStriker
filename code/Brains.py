@@ -33,10 +33,10 @@ class Brains:
                 wall_sensor, 
                 wheels, 
                 striker,
-                strike_zone_center = 105,
-                strike_zone_tolerance = 4,
+                strike_zone_center = 87,
+                strike_zone_tolerance = 0,
                 ball_finding_turn_size = 0.04,
-                is_wall_sensitivity = 5,
+                is_wall_sensitivity = 10,
                 sensor_to_striker_distance = 0 ):
         self.ball_sensor = ball_sensor
         self.wall_sensor = wall_sensor
@@ -233,7 +233,7 @@ class Brains:
             return # nothing to do if we are in the zone
 
         how_far_to_go = abs(ball_distance - self.strike_zone_center)
-        drive_duration = self.calculate_driving_time(how_far_to_go) * .85
+        drive_duration = self.calculate_driving_time(how_far_to_go) * .7
 
         if ball_distance > self.strike_zone_center :
             print("foward" , drive_duration)

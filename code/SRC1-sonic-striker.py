@@ -194,6 +194,9 @@ class MyFrame(tk.Frame):
               
             #Brains
             elif event.char == "i":
+              if striker is not None:
+                striker.hide_striker()
+                time.sleep(.2)      
               ball_distance = "999"      
               # mainly for testing when the robot boots up
               try: 
