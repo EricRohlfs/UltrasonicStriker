@@ -158,7 +158,7 @@ class MyFrame(tk.Frame):
         root.bind('<KeyPress>', self.key_press)
         root.bind('<KeyRelease>', self.key_release)
 
-    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,1,2,3,4,5,6,7,8,9,0,r,p
+    #keys in use w,s,k,z,a,u,d,c,o,t,g,n,3,4,5,6,7,8,9,0,r,p,[,],\
     def key_press(self, event):
         if self.afterId != None:
             self.after_cancel( self.afterId )
@@ -193,15 +193,7 @@ class MyFrame(tk.Frame):
               wheels.turn_left() 
               
             #Brains
-            elif event.char =="1":                  
-              brains.find_ball_left()
-              text.insert('end',"find ball left")
-              
-            elif event.char == "2":
-              brains.find_ball_right()
-              text.insert('end',"find ball right")
-              
-            elif event.char == "p":
+            elif event.char == "i":
               ball_distance = "999"      
               # mainly for testing when the robot boots up
               try: 
@@ -211,15 +203,21 @@ class MyFrame(tk.Frame):
                 
               wall_distance = "%.0f mm " % wall_sensor.distance()
               text.insert('end'," ball wall: " + ball_distance + " " + wall_distance )
-
-            elif event.char == "[":
-              brains.find_ball()
-              #brains.drive_to_strike_zone()
-              #brains.is_ball_in_strike_zone()
-              #calculate_driving_time
-            elif event.char == "]":
+              
+            elif event.char =="o":                  
+              brains.find_ball_left()
+              text.insert('end',"find ball left")
+              
+              
+            elif event.char == "p":
               #brains.find_ball()
               brains.drive_to_strike_zone()
+              #brains.is_ball_in_strike_zone()
+              #calculate_driving_time
+            elif event.char == "[":
+              brains.find_center()      
+              #brains.find_ball()
+              #brains.drive_to_strike_zone()
               #brains.is_ball_in_strike_zone()
               #calculate_driving_time  
             
@@ -255,7 +253,7 @@ class MyFrame(tk.Frame):
               striker.strike(reverse=True)
 
             #Tank cannon style striker with continuous rotation servo
-            # not recomended, but one team has this  
+            # not recomended, but one of our teams has this  
             elif event.char == "-":
               turret.servo_clockwise(turret_pin)      
             elif event.char == "=":

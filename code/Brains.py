@@ -102,7 +102,11 @@ class Brains:
         """
         Looks for the ball by turning the robot left.
         """
-           
+        self.is_wall() #calling now for warm up
+        if self.striker is not None:
+            self.striker.hide_striker()
+            time.sleep(.2)
+            
         self._keep_finding_the_ball = True
         i = 1
         while self.is_wall():
@@ -114,11 +118,34 @@ class Brains:
             time.sleep(0.2)
             i = i + 1
             print(i)
+        
         if i < self.search_ticks:
             return True
         else:
             return False
-            
+        
+    def find_center(self,last = 0):
+        print("finding center")
+        if last is 0:
+            #set last for first call in the loop
+            last = self.ball_sensor.distance()
+
+        if self.is_wall() is False:
+            self.wheels.turn_left()
+            time.sleep(self.ball_finding_turn_size)
+            self.wheels.stop()
+            time.sleep(.15) #let robot stop shaking around
+            current = self.ball_sensor.distance()
+            if current < last :
+                print(current)
+                print(last)
+                self.find_center(last=current)
+            else:
+                #back up one
+                self.wheels.turn_right()
+                time.sleep(self.ball_finding_turn_size)
+                self.wheels.stop()
+                 
     def find_ball_right(self):
         """
         Looks for the ball by turning the robot right.
