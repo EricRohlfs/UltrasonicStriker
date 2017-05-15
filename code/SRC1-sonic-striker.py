@@ -61,7 +61,7 @@ gripper_1_lifter_pin = 9
 
 """
   GPIO pins are assigned here to keep them organized
-  GPIO numbers are unusal,
+  GPIO numbers are unusual,
     they have different numbers for each pin depending on the mode.
     if you are having issues google "raspberry pi and GPIO"
 """
@@ -180,16 +180,16 @@ class MyFrame(tk.Frame):
             #Wheels
             #if you need to switch foward and backward, set in constructor
             elif event.char == "w" or event.keysym == 'Up':
-              text.insert('end', ' FORWARD ')
+              #text.insert('end', ' FORWARD ')
               wheels.foward() 
             elif event.char == "s" or event.keysym == 'Right':
-              text.insert('end', ' RIGHT_TURN ')
+              #text.insert('end', ' RIGHT_TURN ')
               wheels.turn_right()
             elif event.char == "z" or event.keysym == 'Down':
-              text.insert('end', ' BACKWARD ')
+              #text.insert('end', ' BACKWARD ')
               wheels.backward()
             elif event.char == "a" or event.keysym == 'Left':
-              text.insert('end', ' LEFT_TURN ')
+              #text.insert('end', ' LEFT_TURN ')
               wheels.turn_left() 
               
             #Brains
@@ -209,7 +209,7 @@ class MyFrame(tk.Frame):
               
             elif event.char =="o":                  
               brains.find_ball_left()
-              text.insert('end',"find ball left")
+              #text.insert('end',"find ball left")
               
               
             elif event.char == "p":
@@ -227,36 +227,36 @@ class MyFrame(tk.Frame):
             #grabber
             elif event.char in ["3"]:
               grabber.servo_1_open_or_close()
-              text.insert('end',"grabber.servo1 ") 
+              #text.insert('end',"grabber.servo1 ") 
             elif event.char in ["4"]:
               grabber.lift_up_or_down()
-              text.insert('end',"grabber.lifter ") 
+              #text.insert('end',"grabber.lifter ") 
 
             #striker
             elif event.char in ["5"]:
               striker.show_hide_striker()
-              text.insert('end',"striker up down ")
+              #text.insert('end',"striker up down ")
 
             elif event.char == "6":
               #change the number for bigger or smaller turns  
               striker.turn_wedge(10)
-              text.insert('end',"turning striker")
+              #text.insert('end',"turning striker")
 
             elif event.char == "7":
               #change the number for bigger or smaller turns  
               striker.turn_wedge(-10)
-              text.insert('end',"turning striker")
+              #text.insert('end',"turning striker")
               
             elif event.char == "9":
               text.insert('end',' strike ')
               striker.strike()
 
             elif event.char == "0":
-              text.insert('end',' striker up ')
+              #text.insert('end',' striker up ')
               striker.strike(reverse=True)
 
             #Tank cannon style striker with continuous rotation servo
-            # not recomended, but one of our teams has this  
+            # not recommended, but one of our teams has this  
             elif event.char == "-":
               turret.servo_clockwise(turret_pin)      
             elif event.char == "=":
@@ -269,6 +269,7 @@ class MyFrame(tk.Frame):
     def process_release(self, event):
         #print 'key release %s' % event.char
         wheels.stop()
+        turret.servo_stop(turret_pin)
         self.afterId = None
 
 

@@ -49,7 +49,7 @@ class ServoWheels:
             
     def foward(self):
           if(self._switch_foward_backward_commands):
-               print("forward swithced")
+               print("forward switched")
                self.basics.servo_counter_clockwise(self._left_wheel)
                self.basics.servo_clockwise(self._right_wheel)
           else:  
