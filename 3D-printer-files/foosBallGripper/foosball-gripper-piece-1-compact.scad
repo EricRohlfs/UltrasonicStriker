@@ -30,7 +30,7 @@ sg90CavityBackZip = sg90CavityBack - hornStrapWidth;
 //main block
 base_h = 9.15;  //height
 base_w = sg90Width + 10; // width
-base_d = sg90Depth + 14; //46; //depth
+base_d = sg90Depth + 14; //46 is original; //depth
 
 //was 7 - hornStrap, not sure why I couldn't get exact width, so just added the last number
 armMountWidth = base_w/2 - sg90Width/2 - hornStrapWidth +2.75;
