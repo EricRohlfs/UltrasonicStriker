@@ -10,8 +10,8 @@ servoHornLength = 34; //adjust if you have different horn size
 hornStrapWidth = 1.25; // adjust if zip ties don't fit
 hornStrapDepth = 2.3; //adjust if zip ties groves need to be deeper
 
-//Tweak these numbers if necessary, 7 is closest to coat hanger hole
-servoHornZipTieChannelPlacement= [-9, -3.5, 3.5, 7];
+//Tweak these numbers if necessary, the largest positive number is closest to coat hanger hole
+servoHornZipTieChannelPlacement= [-9, -3.5, 2.75, 6.25];
 
 coatHangerDiameter = 2;
 coatHangerChannel = coatHangerDiameter;
@@ -86,7 +86,7 @@ module servo_horn_screw_access(){
 module ServoHornZipTieChanels(){
      for(i=servoHornZipTieChannelPlacement){
          spacing = i * 1.4 ;
-         translate([-(base_w * .25), -(spacing),0]) cube([hornStrapWidth, hornStrapDepth, base_h +.1],center=true);
+         translate([-(base_w * .35), -(spacing),0]) cube([hornStrapWidth, hornStrapDepth, base_h +.1],center=true);
     }
  }
  
@@ -138,9 +138,7 @@ module ServoHornZipTieChanels(){
 module CoatHangerHole(){
      translate([sg90CavityBackZip, armMountY/2,2]) cylinder(h=base_h, d=coatHangerHole,center=true);
     }
-    
-
-     
+       
 module ServoCableHole(){
     //tod: make hole for cable
     sg90CableHoleWidth = 3.75 + .5;
@@ -149,11 +147,17 @@ module ServoCableHole(){
     cube([sg90CableHoleWidth, sg90CableHoleDepth,base_h + 1],true);
     }
 
-
+//a bit diferent than the horn zip tie hole
+// used inplace of the screw if extra security is needed holding the servo
+// to the plate
+ module ServoZipTieHole (){
+      translate([-5 , 13,0]) cube([hornStrapWidth, hornStrapDepth, base_h +.5],center=true);
+     }
 difference (){
     main_body();
     servo_horn_screw_access();
     SG90ServoCavity();
+    ServoZipTieHole();
     //SG90ServoMountingHole();
     //mirror([0,-base_d,0]) SG90ServoMountingHole();
     ServoHornZipTieChanels();
