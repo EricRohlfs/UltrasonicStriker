@@ -1,9 +1,17 @@
-;//numbers are in mm
+//https://github.com/EricRohlfs/UltrasonicStriker
+//numbers are in mm
+
+// Part 1 of 2 for SG90 servo powered foosball gripper
+// A coat hanger is bent into two different arms
+// and attached via zip ties
 
 servoHornLength = 34; //adjust if you have different horn size
 
-hornStrapWidth = 1.2; // adjust if zip ties don't fit
+hornStrapWidth = 1.25; // adjust if zip ties don't fit
 hornStrapDepth = 2.3; //adjust if zip ties groves need to be deeper
+
+//Tweak these numbers if necessary, 7 is closest to coat hanger hole
+servoHornZipTieChannelPlacement= [-9, -3.5, 3.5, 7];
 
 coatHangerDiameter = 2;
 coatHangerChannel = coatHangerDiameter;
@@ -23,14 +31,17 @@ sg90CavityBackZip = sg90CavityBack - hornStrapWidth;
 sg90screwHoleOffest = 1;
 sg90screwHoleRadius = .5;
 
-armMountWidth = 7;
-armMountHeight = 20;
-
 //main block
 base_h = 9.15;  //height
 base_w = sg90Width + 10; // width
 base_d = 46; //depth
 main_bottom = base_h*1.5;
+
+//7 should be base_w - hornstrapWidth - back servo hole
+armMountWidth = 7 - hornStrapWidth;
+armMountHeight = 20;
+armMountY1 = base_d/2; //switch Y and Y1 names are backward
+armMountY = -24;
 
 //servo horn set screw
 setScrewHoleHeight = 150;
@@ -38,6 +49,21 @@ setScrewHoleRadius = 1.5;
 
 servoCavityX = (base_w - sg90Width - 7);
 servoCavityY = 0;
+
+module miniround(size, radius)
+{
+    $fn=50;
+    x = size[0]-radius/2;
+    y = size[1]-radius/2;
+
+    minkowski()
+    {
+        cube(size=[x,y,size[2]],center=true);
+        cylinder(r=radius);
+        // Using a sphere is possible, but will kill performance
+        //sphere(r=radius);
+    }
+}
 
 module main_body(){
    cube([base_w,base_d,base_h],center=true);
@@ -56,12 +82,11 @@ module servo_horn_screw_access(){
     //hole for servo horn screw so you can quickly swap out broken servo on competition day
     rotate([0,90,0]) translate([0,0,-(base_w/1.99)]) cylinder(h= setScrewHoleHeight,r= setScrewHoleRadius);
     }    
-     
+   
 module ServoHornZipTieChanels(){
-     for(i=[-7.5, -2.5, 2.5, 7.5]){
+     for(i=servoHornZipTieChannelPlacement){
          spacing = i * 1.4 ;
-         translate([-(base_w * .15), -(spacing),0]) cube([hornStrapWidth, hornStrapDepth, base_h +.1],center=true);
-    
+         translate([-(base_w * .25), -(spacing),0]) cube([hornStrapWidth, hornStrapDepth, base_h +.1],center=true);
     }
  }
  
@@ -69,30 +94,51 @@ module ServoHornZipTieChanels(){
         translate([-(base_w/2),0,0]) cube([1.75,servoHornLength,base_h +.1],true);
      }
      
- module ArmMount(){{
-        translate([sg90CavityBackZip,-24,6]){
-            
-            difference(){
-                $fn=50;
-                cube([armMountWidth - hornStrapWidth,
-                      base_d/2,armMountHeight +1],true);
-                
-                //minkowski()
-                //{
-                  //cube([armMountWidth,base_d/2,armMountHeight],true);
-                  //rotate([0,0,90])cylinder(r=4,h=4,true);
-               // }
-                
-                coatHangerBottomOffset = 2.5;
-                rotate([90,0,0]) translate([0,armMountHeight/2 ,- base_w  -10]) cylinder(h= base_d *2,d= coatHangerChannel);
-            
-                //translate([0,0,0]) cube([armMountWidth +.01,base_d *.1,armMountHeight +.01],true);
-                //todo:math so at end of block
-            translate([0,12,0])cylinder(h=22, d=coatHangerChannel, center=true);
-           }}
-       }
-            
+ module ArmZipTieHole (){
+      rotate([0,90,0]) cube([hornStrapWidth, hornStrapDepth, base_h +.1],center=true);
      }
+     
+ module ArmZipTieHoles(){
+     numberOfHoles = 3;//must be the same as the array size of holes (sizeof(holes) did not work
+     holeDistanceFromTop = 1.5;
+     //-1 for one on the left, 0 for center, 1 for one on the right
+     holes = [-1,0,1];
+     for(i=holes){
+        y = armMountY1/numberOfHoles * i;
+        z = armMountHeight/2 - coatHangerDiameter -holeDistanceFromTop;
+        translate([0,y,z]) ArmZipTieHole();
+        //x1=x1 + 2;
+    }
+}    
+ module ArmMount(){
+    translate([sg90CavityBackZip,armMountY,6]){
+        difference(){
+            $fn=50;
+            cube([armMountWidth -.1, armMountY1, armMountHeight +1],true);
+            //flanges at the top 
+            //todo:make dynamic
+           translate([-2,0,11.75])rotate([0,45,0]) cube([2, armMountY1 +1 , 5],true);
+            translate([2,0,11.75])rotate([0,-45,0]) cube([2, armMountY1 +1 , 5],true);
+            //top coat hanger groove
+            coatHangerBottomOffset = 2.5;
+            rotate([90,0,0]) translate([0,armMountHeight/2 ,- base_w  -10]) cylinder(h= base_d *2,d= coatHangerChannel);
+            
+        //back coat hanger groove
+        translate([0,-armMountY/2,0])cylinder(h=22, d=coatHangerChannel, center=true);
+         //back groove inside bendy angle
+          
+         translate([0,-armMountY/2,7])rotate([-45,0,0])cube([coatHangerChannel,10,coatHangerChannel +3], center=true);
+        
+       translate([0,-armMountY/2 ,8.5])rotate([-15,0,0])cube([coatHangerChannel,20,coatHangerChannel +3], center=true);
+             ArmZipTieHoles();
+       }
+     }
+}
+
+module CoatHangerHole(){
+     translate([sg90CavityBackZip, armMountY/2,2]) cylinder(h=base_h, d=coatHangerHole,center=true);
+    }
+    
 
      
 module ServoCableHole(){
@@ -103,6 +149,7 @@ module ServoCableHole(){
     cube([sg90CableHoleWidth, sg90CableHoleDepth,base_h + 1],true);
     }
 
+
 difference (){
     main_body();
     servo_horn_screw_access();
@@ -112,8 +159,12 @@ difference (){
     ServoHornZipTieChanels();
     ServoHornNotch();
     ServoCableHole();
-    translate([sg90CavityBackZip, -24/2,0]) cylinder(h=base_h +1, d=coatHangerHole,center=true);
+    CoatHangerHole();//todo: tie this in with arm module
+    
 }
-
 ArmMount();
+   
+
+
+
    
