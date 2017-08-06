@@ -1,9 +1,9 @@
 //units mm
 holes = 20;
 sides = 15;
-x = 10;
+x = 4;
 
-z= 7;
+z= 4;
 cable= 2.7;
 spacing = .75;
 y= holes * (cable +spacing)+ sides*2;
@@ -17,5 +17,5 @@ difference(){
         rotate([0,90,0])
         cylinder(d=cable,h=20);
         }
-        //text("OpenSCAD", font = "Liberation Sans");
+        text("OpenSCAD", font = "Liberation Sans");
 }

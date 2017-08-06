@@ -159,8 +159,8 @@ module ZipTieHole (){
  }
  
  
-x=27;
-y=55;
+x=18;
+y=40;
 z= 4;
 difference (){
     //main_body();
@@ -177,34 +177,61 @@ difference (){
   
     
     cube([x,y,z]);
-    translate([x/2,y/2,-.1])cylinder(d=4, h= z+.5);
+    screwHoleSize = 3.7;
+    hornCenterX = x-7.8;
+    //servohorn set screw
+    translate([hornCenterX +screwHoleSize/2 ,17,-.1])cylinder(d=screwHoleSize, h= z+.5);
     count = 4;
     //coat hanger side
+    coatLongX = x-3;
     for (i=[0:count]){
-        yy = 4 + (y/count) * i;
-        translate([x-4,yy,-.1]) ZipTieHole();
+        yy = 3 + (y/count) * i;
+        translate([coatLongX,yy,-.1]) ZipTieHole();
         } 
+        
     //back two    
-    count2 = 1;
-    for (i=[0:count2]){
-            yy = (10  * i);
-            rotate([0,0,90])translate([x*2-3,yy-16,-.1]) ZipTieHole();
-            }  
-     //servo horn set screw
-    rotate([90,0,0]) translate([x/2,y/2,-.1])cylinder(d=4, h= z+.5);
-     //sero horn zip tie 
-     for (i=[0:1]){
-            yy = (11  * i);
-            translate([9,(7.5 + yy) ,-.1]) ZipTieHole();
-            translate([18.5,(7.5 + yy) ,-.1]) ZipTieHole();
+    for (i=[0:1]){
+        yy = (7  * i);
+        rotate([0,0,90])translate([y-2, yy-10,-.1]) ZipTieHole();
+    }  
+
+
+   
+    translate([coatLongX -.25, 6,-.1]) {
+        ZipTieHole();
+        translate([0,4,0]) ZipTieHole();
+    }
+    translate([coatLongX -.25, 25,-.1]) {
+        ZipTieHole();
+        translate([0,5,0]) ZipTieHole();
+    }
+    
+    translate([hornCenterX -1 , 6,-.1]) {
+        ZipTieHole();
+        translate([0,5,0]) ZipTieHole();
+    }
+    translate([coatLongX -6, 25,-.1]) {
+        ZipTieHole();
+        translate([0,6,0]) ZipTieHole();
+    }
+         
+            
+            
+    //sero horn zip tie 
+    //for (i=[0:1]){
+    //        yy = 5 +(12  * i);
+    //        translate([coatLongX-10, yy ,-.1]) ZipTieHole();
+    //        translate([coatLongX-1,yy ,-.1]) ZipTieHole();
             
             //visual aids
             //todo: could add visual aids so can clearly show cross sections
-            }  
-     for (i=[0:1]){
-            yy = (11  * i);
-            translate([9,(y/2+7.5 + yy) ,-.1]) ZipTieHole();
-            translate([18.5,(y/2 +7.5 + yy) ,-.1]) ZipTieHole();
-            } 
+          //  }  
+    
+            
+            // for (i=[0:1]){
+    //        yy = (11  * i);
+    //        translate([9,(y/2+7.5 + yy) ,-.1]) ZipTieHole();
+    //        translate([18.5,(y/2 +7.5 + yy) ,-.1]) ZipTieHole();
+    //        } 
 }
    
