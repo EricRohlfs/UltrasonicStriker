@@ -1,5 +1,5 @@
 
-screwDriverDiameter = 7;
+screwDriverDiameter = 4.5;
 coatHangerDiameter = 2;
 mainDiameter = 28; //end product should be 35 but it will spring out so give room
 mainHeight = 10;
