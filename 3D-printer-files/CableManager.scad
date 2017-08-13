@@ -17,5 +17,5 @@ difference(){
         rotate([0,90,0])
         cylinder(d=cable,h=20);
         }
-        text("OpenSCAD", font = "Liberation Sans");
+        //text("OpenSCAD", font = "Liberation Sans");
 }

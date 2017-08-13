@@ -18,7 +18,7 @@ coatHangerDiameter = coatHangerDiameterActual +.25;
 coatHangerChannel = coatHangerDiameter;
 coatHangerHole = coatHangerChannel +.65;
 
-sg90Margin = .1; //cause the hole needs to be a tad bigger than the object
+sg90Margin = .2; //cause the hole needs to be a tad bigger than the object
 sg90StickerAdjustment = .2;//stickers were getting ripped off because it was too tight
 sg90Width = 12.3 + sg90Margin + sg90StickerAdjustment;
 sg90Depth = 22.8 + sg90Margin;
@@ -34,7 +34,7 @@ base_d = sg90Depth + 14; //46 is original; //depth
 
 //was 7 - hornStrap, not sure why I couldn't get exact width, so just added the last number
 armMountWidth = base_w/2 - sg90Width/2 - hornStrapWidth +2.75;
-armMountHeight = 20;
+armMountHeight = 25;
 armMountY = base_d/2 + 6;
 armMountTY = -armMountY -1.5;
 armTransX = sg90CavityBack -.9;
@@ -97,7 +97,7 @@ module ServoHornZipTieChanels(){
     }
 }    
  module ArmMount(){
-    translate([armTransX,armMountTY,6]){
+    translate([armTransX,armMountTY,6+2.426]){
         difference(){
             $fn=50;
             cube([armMountWidth , armMountY, armMountHeight +1],true);
