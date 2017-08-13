@@ -1,7 +1,7 @@
 //https://github.com/EricRohlfs/UltrasonicStriker
 //numbers are in mm
 
-handleLength = 40;
+handleLength = 70;
 numberOfZipTieHoles = 3;
 
 // Part 1 of 2 for SG90 servo powered foosball gripper
@@ -30,8 +30,8 @@ sg90Height = 26.5; //must be greater that base_h
 sg90CavityBack = -sg90Width/2; //back edge reference point for the arm and zip ties
 sg90CavityBackZip = sg90CavityBack - hornStrapWidth;
 sg90Thick = 12.1;
-sg90InsertReal = 16;
-sg90InsertOffset = 1;
+sg90InsertReal = 15.4;
+sg90InsertOffset = .35;
 sg90Insert = sg90InsertReal+ sg90InsertOffset;
 
 //main block
@@ -54,7 +54,7 @@ module main_body(){
     }
   
 module cableCavity(){
-    cable_offset =2.5;
+    cable_offset =3.1;
     translate([sg90Insert -sg90InsertOffset - cav_x -cable_offset, sg90Depth -.1,0])cube([cav_x,cav_y,sg90Thick]);
     
     }
